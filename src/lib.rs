@@ -1,5 +1,9 @@
 use std::convert::From;
 use std::ops::BitAnd;
+use std::fmt::{self, Display};
+
+const WIDTH: u8 = 8;
+const HEIGHT: u8 = 8;
 
 enum Piece {
     Pawn = 2,
@@ -24,11 +28,19 @@ impl From<u64> for Bitboard {
     }
 }
 
-impl BitAnd for Bitboard {
+impl BitAnd<Self> for Bitboard {
     type Output = Self;
 
     fn bitand(self, rhs: Self) -> Self::Output {
         Self(self.0 & rhs.0)
+    }
+}
+
+impl BitAnd<u64> for Bitboard {
+    type Output = Self;
+
+    fn bitand(self, rhs: u64) -> Self::Output {
+        Self(self.0 & rhs)
     }
 }
 
@@ -47,5 +59,30 @@ impl Board {
 
     fn get_piece_of_color(&self, p: Piece, c: Color) -> Bitboard {
         self.get_piece(p) & self.get_color(c)
-    } 
+    }
+}
+
+impl Display for Board {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut output = String::new();
+        let mut c: u64 = 1;
+        while c != 0 {
+            let mut s = String::new();
+            let mut filled = false;
+            for board in self.boards {
+                if (board & c).0 > 0 {
+                    s += "1";
+                    filled = true;
+                }
+            }
+
+            if !filled {
+                s += "0";
+            }
+
+            output = s + &output; 
+            c = c << 1;
+        }
+        Ok(())
+    }
 }
