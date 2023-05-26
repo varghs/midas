@@ -1,6 +1,6 @@
 // Place for temporary debugging stuff
 use crate::{HEIGHT, WIDTH};
-use midas::Board;
+use midas::{Board, Bitboard};
 
 fn draw_board(board: &Board) {
     // draw lines
@@ -28,15 +28,15 @@ fn draw_board(board: &Board) {
 }
 
 /// Modifies out to add the newly addded bits
-pub fn get_position(out: &mut String, mut bits: BitBoard, piece: String) {
+pub fn get_position(out: &mut String, mut bits: Bitboard, piece: String) {
     let mut counter = 0;
-    while bits != 0 {
-        let cur_bit = bits % 2;
+    while bits.0 != 0 {
+        let cur_bit = bits.0 % 2;
 
         if cur_bit == 1 {
             out.replace_range(counter * 3..counter * 3 + 3, &piece);
         }
         counter += 1;
-        bits /= 2;
+        bits.0 /= 2;
     }
 }
