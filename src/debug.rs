@@ -1,5 +1,7 @@
 // Place for temporary debugging stuff
-use midas::*;
+use crate::{HEIGHT, WIDTH};
+use midas::Board;
+
 fn draw_board(board: &Board) {
     // draw lines
     // King:     Ki
