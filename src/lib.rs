@@ -1,13 +1,32 @@
 use std::fmt::{self, Display};
 
+// Gets value at bit
 macro_rules! get_bit {
     ($bitboard:expr, $square:expr) => {
         $bitboard & ((1 as u64) << $square)
     };
 }
 
+
+// Sets bit to 1
+#[macro_export]
+macro_rules! set_bit {
+    ($bitboard:expr, $square:expr) => {
+        $bitboard |= ((1 as u64) << $square)
+    };
+}
+
+
+// Resets bit to 0
+#[macro_export]
+macro_rules! pop_bit {
+    ($bitboard:expr, $square:expr) => {
+        $bitboard &= !((1 as u64) << $square)
+    };
+}
+
 #[rustfmt::skip]
-enum Square {
+pub enum Square {
   a1, b1, c1, d1, e1, f1, g1, h1,
   a2, b2, c2, d2, e2, f2, g2, h2,
   a3, b3, c3, d3, e3, f3, g3, h3,
@@ -24,6 +43,12 @@ pub fn print_bitboard(b: Bitboard) {
     for rank in (0..8).rev() {
         for file in 0..8 {
             let square = rank * 8 + file;
+
+            // prints rank numbers
+            if file == 0 {
+                print!("{} ", rank + 1);
+            }
+
             print!(
                 "{} ",
                 match get_bit!(b, square) {
@@ -34,6 +59,9 @@ pub fn print_bitboard(b: Bitboard) {
         }
         print!("\n");
     }
+
+    // prints file letters
+    print!("  a b c d e f g h\n")
 }
 
 const WIDTH: u8 = 8;
