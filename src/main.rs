@@ -11,11 +11,6 @@ use midas::{pop_bit, set_bit};
 use midas::Square;
 
 fn main() {
-    let mut b: u64 = 0;
-    set_bit!(b, Square::e2 as u64);
-    set_bit!(b, Square::e4 as u64);
-    print_bitboard(b);
-    pop_bit!(b, Square::e4 as u64);
-    println!();
+    let b = 0x8040201008040201;
     print_bitboard(b);
 }

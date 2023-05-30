@@ -72,21 +72,20 @@ const HEIGHT: u8 = 8;
 
 enum Piece {
     Pawn = 2,
-    Rook = 3,
-    Knight = 4,
-    Bishop = 5,
-    Queen = 6,
-    King = 7,
+    Rook,
+    Knight,
+    Bishop,
+    Queen,
+    King,
 }
 
 enum Color {
-    White = 0,
-    Black = 1,
+    White,
+    Black,
 }
 
 pub struct Board {
     boards: [Bitboard; 8],
-
 }
 
 impl Board {

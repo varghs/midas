@@ -1,8 +1,9 @@
 # Midas
 Cause everything it touches turns to gold or something, idk.
 ## Board Representation
-### Square Mapping Considerations
-#### Deduction on Files and Ranks
+### The Board of Sets
+#### Square Mapping Considerations
+##### Deduction on Files and Ranks
 We use LSF-mapping (Least Significant File, i.e. iterating through ranks at the outer level, then files at the inner level).
 ```
 square_idx = 8 * rank + file;
@@ -10,13 +11,13 @@ file = square_idx % 8 = square_idx & 7;
 rank = square_idx / 8 = square_idx >> 3;
 ```
 
-#### Endianness
+##### Endianness
 We use little endian mapping to retain the nice relations (a < h and 0 < 7).
 
-#### Little-Endian Rank-File Mapping
+##### Little-Endian Rank-File Mapping
 ![LERF visualization on chessboard](lerf.jpg)
 
-##### Enumeration
+###### Enumeration
 ```rust
 pub enum Square {
   a1, b1, c1, d1, e1, f1, g1, h1,
@@ -30,15 +31,51 @@ pub enum Square {
 }
 ```
 
-##### Compass Rose
+###### Compass Rose
 ```
- noWe         nort         noEa
+  noWe         nort         noEa
           +7    +8    +9
               \  |  /
   west    -1 <-  0 -> +1    east
               /  |  \
           -9    -8    -7
   soWe         sout         soEa
+```
+
+#### Standard Board Definition
+We use a denser board definition. There are two bitboards for white and black pieces, and 6 bitboards for each piece type. To get white pawns for example, we would intersect the white bitboard with the pawns bitboard.
+```rust
+enum Piece {
+    Pawn = 2,
+    Rook,
+    Knight,
+    Bishop,
+    Queen,
+    King,
+}
+
+enum Color {
+    White,
+    Black,
+}
+
+pub struct Board {
+    boards: [Bitboard; 8],
+}
+
+impl Board {
+    fn get_piece(&self, p: Piece) -> Bitboard {
+        self.boards[p as usize]
+    }
+
+    fn get_color(&self, c: Color) -> Bitboard {
+        self.boards[c as usize]
+    }
+
+    fn get_piece_of_color(&self, p: Piece, c: Color) -> Bitboard {
+        self.get_piece(p) & self.get_color(c)
+    }
+}
 ```
 
 ## Debugging
