@@ -30,6 +30,17 @@ pub enum Square {
 }
 ```
 
+##### Compass Rose
+```
+ noWe         nort         noEa
+          +7    +8    +9
+              \  |  /
+  west    -1 <-  0 -> +1    east
+              /  |  \
+          -9    -8    -7
+  soWe         sout         soEa
+```
+
 ## Debugging
 ## Search
 ## Evaluation
