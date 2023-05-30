@@ -39,6 +39,9 @@ pub enum Square {
 
 pub type Bitboard = u64;
 
+const EMPTY: Bitboard = 0;
+const UNIVERSE: Bitboard = 0xffffffffffffffff;
+
 pub fn print_bitboard(b: Bitboard) {
     for rank in (0..8).rev() {
         for file in 0..8 {
@@ -83,6 +86,7 @@ enum Color {
 
 pub struct Board {
     boards: [Bitboard; 8],
+
 }
 
 impl Board {
