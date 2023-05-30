@@ -6,6 +6,9 @@ mod test;
 
 use debug::*;
 
+use midas::print_bitboard;
+
 fn main() {
-    println!(" ");
+    let b: u64 = 0x00000000000000FF;
+    print_bitboard(b);
 }
