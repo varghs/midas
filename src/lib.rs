@@ -1,6 +1,6 @@
 use std::convert::From;
-use std::ops::BitAnd;
 use std::fmt::{self, Display};
+use std::ops::BitAnd;
 
 type Bitboard = u64;
 
@@ -62,7 +62,7 @@ impl Display for Board {
                 s += "0";
             }
 
-            output = s + &output; 
+            output = s + &output;
             c = c << 1;
         }
         Ok(())
