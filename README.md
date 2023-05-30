@@ -78,6 +78,12 @@ impl Board {
 }
 ```
 
+### Bitboard Basics
+#### General Bitboard Techniques
+##### General Setwise Operations
+###### Relational
+####### Equality
+
 ## Debugging
 ## Search
 ## Evaluation
