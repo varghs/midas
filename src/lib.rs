@@ -2,6 +2,8 @@ use std::convert::From;
 use std::ops::BitAnd;
 use std::fmt::{self, Display};
 
+type Bitboard = u64;
+
 const WIDTH: u8 = 8;
 const HEIGHT: u8 = 8;
 
@@ -19,36 +21,16 @@ enum Color {
     Black = 1,
 }
 
-#[derive(Clone, Copy)]
-pub struct Bitboard(pub u64);
-
-impl From<u64> for Bitboard {
-    fn from(n: u64) -> Self {
-        Bitboard(n)
-    }
-}
-
-impl BitAnd<Self> for Bitboard {
-    type Output = Self;
-
-    fn bitand(self, rhs: Self) -> Self::Output {
-        Self(self.0 & rhs.0)
-    }
-}
-
-impl BitAnd<u64> for Bitboard {
-    type Output = Self;
-
-    fn bitand(self, rhs: u64) -> Self::Output {
-        Self(self.0 & rhs)
-    }
-}
-
 pub struct Board {
     boards: [Bitboard; 8],
 }
 
 impl Board {
+    fn new() -> Self {
+        let mut arr: [Bitboard; 8] = []
+        let mut b = Board {}
+    }
+
     fn get_piece(&self, p: Piece) -> Bitboard {
         self.boards[p as usize]
     }
@@ -69,8 +51,8 @@ impl Display for Board {
         while c != 0 {
             let mut s = String::new();
             let mut filled = false;
-            for board in self.boards {
-                if (board & c).0 > 0 {
+            for board in &self.boards[2..] {
+                if (*board & c).0 > 0 {
                     s += "1";
                     filled = true;
                 }
