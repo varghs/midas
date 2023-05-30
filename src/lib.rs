@@ -1,8 +1,6 @@
-use std::convert::From;
 use std::fmt::{self, Display};
-use std::ops::BitAnd;
 
-type Bitboard = u64;
+pub type Bitboard = u64;
 
 const WIDTH: u8 = 8;
 const HEIGHT: u8 = 8;
@@ -27,8 +25,9 @@ pub struct Board {
 
 impl Board {
     fn new() -> Self {
-        let mut arr: [Bitboard; 8] = []
-        let mut b = Board {}
+        // let mut arr: [Bitboard; 8] = [];
+        // let mut b = Board {}
+        todo!();
     }
 
     fn get_piece(&self, p: Piece) -> Bitboard {
@@ -52,7 +51,7 @@ impl Display for Board {
             let mut s = String::new();
             let mut filled = false;
             for board in &self.boards[2..] {
-                if (*board & c).0 > 0 {
+                if board & c > 0 {
                     s += "1";
                     filled = true;
                 }
@@ -65,6 +64,6 @@ impl Display for Board {
             output = s + &output;
             c = c << 1;
         }
-        Ok(())
+        todo!();
     }
 }
