@@ -14,7 +14,7 @@ rank = square_idx / 8 = square_idx >> 3;
 We use little endian mapping to retain the nice relations (a < h and 0 < 7).
 
 #### Little-Endian Rank-File Mapping
-!(LERF visualization on chessboard)[lerf.jpg]
+![LERF visualization on chessboard](lerf.jpg)
 
 ## Debugging
 ## Search
