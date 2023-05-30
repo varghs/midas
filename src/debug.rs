@@ -1,6 +1,6 @@
 // Place for temporary debugging stuff
 use crate::{HEIGHT, WIDTH};
-use midas::{Board, Bitboard};
+use midas::{Bitboard, Board};
 
 fn draw_board(board: &Board) {
     // draw lines
