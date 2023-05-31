@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::get_position;
-    use midas::Bitboard;
+    use midas::engine::bitboard::Bitboard;
 
     #[test]
     fn test_get_position() {
