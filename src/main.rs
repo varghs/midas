@@ -6,9 +6,7 @@ mod test;
 
 use debug::*;
 
-use midas::print_bitboard;
-use midas::{pop_bit, set_bit};
-use midas::Square;
+use midas::engine::bitboard::print_bitboard;
 
 fn main() {
     let b = 0x8040201008040201;

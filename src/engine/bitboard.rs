@@ -1,7 +1,7 @@
 // Gets value at bit
 macro_rules! get_bit {
     ($bitboard:expr, $square:expr) => {
-        $bitboard & ((1 as u64) << $square)
+        $bitboard & ((1 as u64) << $square) != 0
     };
 }
 
@@ -40,10 +40,7 @@ pub fn print_bitboard(b: Bitboard) {
 
             print!(
                 "{} ",
-                match get_bit!(b, square) {
-                    0 => 0,
-                    _ => 1,
-                }
+                get_bit!(b, square) as u8
             );
         }
         print!("\n");
