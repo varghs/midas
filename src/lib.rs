@@ -67,6 +67,21 @@ pub fn print_bitboard(b: Bitboard) {
     print!("  a b c d e f g h\n")
 }
 
+trait BitwiseOperations {
+    fn subset_of(&self, o: Self) -> bool;
+    fn disjoint(&self, o: Self) -> bool;
+}
+
+impl BitwiseOperations for Bitboard {
+    fn subset_of(&self, o: Self) -> bool {
+        *self & o == *self
+    }
+
+    fn disjoint(&self, o: Self) -> bool {
+        *self & o == 0
+    }
+}
+
 const WIDTH: u8 = 8;
 const HEIGHT: u8 = 8;
 
