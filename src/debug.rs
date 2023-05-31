@@ -14,7 +14,7 @@ fn draw_board(board: &Board) {
     let output: String = " ".repeat(64 * 3);
 
     for i in 0..board.boards.len() {
-        get_position(&mut output, bitboard, board.get_string_of_piece())
+        get_position(&mut output, bitboard, board.get_string_of_piece());
     }
     // a1 is 0 * 3, b1 is 1 * 3, h8 is 59 * 3
     // using lerf

@@ -43,6 +43,7 @@ impl Board {
     }
     pub fn get_string_of_piece(&self, index: u32) -> String {
         // lol!
+        todo!();
     }
 }
 
