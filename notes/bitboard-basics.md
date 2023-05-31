@@ -27,7 +27,7 @@ const UNIVERSE: Bitboard = 0xffffffffffffffff;
 `(a & b) & c == a & (b & c)`
 
 ###### Subset
-The intersection of two sets is a subset of them both.
+The intersection of two sets is a subset of them both. \
 To check if one set is a subset of the other, we compare if the intersection equals the subset.
 ```rust
 fn is_subset(&self, o: Self) -> bool {
@@ -56,7 +56,7 @@ fn disjoint(&self, o: Self) -> bool {
 `(a | b) | c == a | (b | c)`
 
 ###### Distributive
-`a | (b & c) == (a | b) & (a | c)`
+`a | (b & c) == (a | b) & (a | c)` \
 `a & (b | c) == (a & b) | (a & c)`
 
 ###### Superset
@@ -66,30 +66,30 @@ The union of two sets is a superset of both of the sets.
 `!a`
 
 ###### Complement Laws
-`a | !a == UNIVERSE`
-`a & !a == EMPTY`
-`!EMPTY == UNIVERSE`
+`a | !a == UNIVERSE` \
+`a & !a == EMPTY` \
+`!EMPTY == UNIVERSE` \
 `!UNIVERSE == EMPTY`
 
 ###### DeMorgan's Laws
-`!(a | b) == !a & !b`
+`!(a | b) == !a & !b` \
 `!(a & b) == !a | !b`
 
 ##### Relative Complement
-The set of all things not in a, that are in b. May be interpreted as a bitwise < operation.
+The set of all things not in a, that are in b. May be interpreted as a bitwise < operation. \
 `!a & b`
 
 ###### Super Minus Sub
-Where `-` refers to the symmetrical difference (exclusive or).
-`!a & b == (a | b) - a`
+Where `-` refers to the symmetrical difference (exclusive or). \
+`!a & b == (a | b) - a` \
 `!a & b == b - (a & b)`
 
 ##### Implication
-Implication may be interpreted as a bitwise <= operation.
+Implication may be interpreted as a bitwise <= operation. \
 `!a | b`
 
 ##### Exclusive Or
-Implements a bitwise != relation. Also acts as bitwise addition and subtraction (mod 2).
+Implements a bitwise != relation. Also acts as bitwise addition and subtraction (mod 2). \
 `a ^ b`
 
 ###### Commutative
@@ -108,7 +108,7 @@ Implements a bitwise != relation. Also acts as bitwise addition and subtraction 
 If one operand is a subset of the other, xor (or subtraction) implements the relative complement.
 
 ###### Subtraction
-While commutative, xor is a better replacement for subtracting from a power of two minus one values.
+While commutative, xor is a better replacement for subtracting from a power of two minus one values. \
 `(2<sup>n</sup> - 1) - a == a ^ (2<sup>n</sup> - 1)`
 
 ##### Equivalence
