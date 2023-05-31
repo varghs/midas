@@ -20,7 +20,7 @@ enum Color {
 }
 
 pub struct Board {
-    boards: [Bitboard; 8],
+    pub boards: [Bitboard; 8],
 }
 
 impl Board {
@@ -40,6 +40,9 @@ impl Board {
 
     fn get_piece_of_color(&self, p: Piece, c: Color) -> Bitboard {
         self.get_piece(p) & self.get_color(c)
+    }
+    pub fn get_string_of_piece(&self, index: u32) -> String {
+        // lol!
     }
 }
 
