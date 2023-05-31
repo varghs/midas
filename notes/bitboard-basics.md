@@ -109,7 +109,7 @@ If one operand is a subset of the other, xor (or subtraction) implements the rel
 
 ###### Subtraction
 While commutative, xor is a better replacement for subtracting from a power of two minus one values. \
-`(2<sup>n</sup> - 1) - a == a ^ (2<sup>n</sup> - 1)`
+<code>(2<sup>n</sup> - 1) - a == a ^ (2<sup>n</sup> - 1)</code>
 
 ##### Equivalence
 
