@@ -111,6 +111,29 @@ If one operand is a subset of the other, xor (or subtraction) implements the rel
 While commutative, xor is a better replacement for subtracting from a power of two minus one values. \
 <code>(2<sup>n</sup> - 1) - a == a ^ (2<sup>n</sup> - 1)</code>
 
+###### Or without And
+`a ^ b == (a | b) & !(a & b)` \
+`a ^ b == (a | b) ^ (a & b)` \
+`a ^ b == (a | b) - (a & b)`
+
+###### Disjoint Sets
+`a | b == (a & b) ^ (a ^ b)` \
+`a | b == (a & b) ^  a ^ b ` \
+`a | b == (a & b) | (a ^ b)` \
+`a | b == (a & b) + (a ^ b)`
+
+###### Union of Complements
+`a ^ b == (a & !b) | (b & !a)` \
+`a ^ b == (a & !b) ^ (b & !a)` \
+`a ^ b == (a & !b) + (b & !a)`
+
+###### Toggle
+Bitwise xor can be used to toggle with a mask. \
+`a ^= mask`
+
+###### Complement
+`a ^ UNIVERSE == !a`
+
 ##### Equivalence
 
 ##### Majority
