@@ -1,34 +1,44 @@
 // Place for temporary debugging stuff
-use crate::{HEIGHT, WIDTH};
-use midas::{Bitboard, Board};
+use midas::engine::bitboard::Bitboard;
+use midas::engine::board::Board;
+use midas::engine::board::Piece;
+use midas::get_bit;
 
-fn draw_board(board: &Board) {
+pub fn draw_board(board: &Board) {
     // draw lines
-    // King:     Ki
-    // Bishop:   Bi
-    // Pawn:     Pa
-    // Knight:   Kn
-    // Rook:     Ro
-    // Queen:
-    // 64 squares, 3 characters each
-    let output: String = " ".repeat(64 * 3);
-
-    for i in 0..board.boards.len() {
-        get_position(&mut output, bitboard, board.get_string_of_piece());
-    }
-    // a1 is 0 * 3, b1 is 1 * 3, h8 is 59 * 3
+    // King:     K
+    // Bishop:   B
+    // Pawn:     P
+    // Knight:   N
+    // Rook:     R
+    // Queen:    Q
+    // 64 squares, 2 characters each
+    let mut output: String = String::new();
     // using lerf
+    for rank in (0..8).rev() {
+        for file in 0..8 {
+            let square = rank * 8 + file;
+            let mut filled = false;
 
-    /* pseudo code
-    get_position(white_pawn)
-    get_position(white_king)
-    etc....
+            for board_idx in 2..8 {
+                match get_bit!(board.boards[board_idx], square) {
+                    true => {
+                        filled = true;
+                        let p: Piece = board_idx.try_into().unwrap();
+                        output += format!("{} ", p).as_str();
+                    }
+                    false => (),
+                }
+            }
 
-    get_position(output: String):
-        every 3 steps put the ouput from a1 to h8
-        change the stuff at certain position
-        so 64 sqaures * 3 characters each == length of string
-    */
+            if !filled {
+                output += ". ";
+            }
+        }
+        output += "\n";
+    }
+
+    print!("{}", output);
 }
 
 /// Modifies out to add the newly addded bits
