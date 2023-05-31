@@ -1,4 +1,6 @@
 use super::bitboard::Bitboard;
+use std::fmt::Display;
+use std::convert::TryFrom;
 
 #[rustfmt::skip]
 pub enum Square {
@@ -12,7 +14,7 @@ pub enum Square {
   a8, b8, c8, d8, e8, f8, g8, h8
 }
 
-enum Piece {
+pub enum Piece {
     Pawn = 2,
     Rook,
     Knight,
@@ -21,13 +23,51 @@ enum Piece {
     King,
 }
 
+    // King:     K
+    // Bishop:   B
+    // Pawn:     P
+    // Knight:   N 
+    // Rook:     R
+    // Queen:    Q
+impl Display for Piece {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s: &str;
+        match self {
+            Piece::Pawn => s = "P",
+            Piece::Rook => s = "R",
+            Piece::Knight => s = "N",
+            Piece::Bishop => s = "B",
+            Piece::Queen => s = "Q",
+            Piece::King => s = "K",
+        }
+
+        write!(f, "{}", s)
+    }
+}
+
+impl TryFrom<usize> for Piece {
+    type Error = String;
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            2 => Ok(Piece::Pawn),
+            3 => Ok(Piece::Rook),
+            4 => Ok(Piece::Knight),
+            5 => Ok(Piece::Bishop),
+            6 => Ok(Piece::Queen),
+            7 => Ok(Piece::King),
+            _ => Err("Invalid conversion".to_string())
+        }
+    }
+}
+
+
 enum Color {
     White,
     Black,
 }
 
 pub struct Board {
-    boards: [Bitboard; 8],
+    pub boards: [Bitboard; 8],
 }
 
 impl Board {

@@ -1,4 +1,5 @@
 // Gets value at bit
+#[macro_export]
 macro_rules! get_bit {
     ($bitboard:expr, $square:expr) => {
         $bitboard & ((1 as u64) << $square) != 0
