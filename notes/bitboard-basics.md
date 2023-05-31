@@ -4,7 +4,7 @@
 Essential in testing and manipulating bitboards. Relational test for equality, bitwise boolean perform intrinsic setwise operations, shifting bitboards simulates piece movement, and arithmetical operations are used in bit-twiddling applications and to calculate various hash-indices.
 #### Relational
 ##### Equality
-`a == b` - equal
+`a == b` - equal \
 `a != b` - not equal
 
 ##### Empty and Universe
