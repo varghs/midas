@@ -23,12 +23,6 @@ pub enum Piece {
     King,
 }
 
-    // King:     K
-    // Bishop:   B
-    // Pawn:     P
-    // Knight:   N 
-    // Rook:     R
-    // Queen:    Q
 impl Display for Piece {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s: &str;
@@ -89,35 +83,3 @@ impl Board {
         self.get_piece(p) & self.get_color(c)
     }
 }
-
-// TODO!
-/*
-impl Display for Board {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut output = String::new();
-        let mut c: u64 = 1;
-        while c != 0 {
-            let mut s = String::new();
-            let mut filled = false;
-            for board in &self.boards[2..] {
-                if board & c > 0 {
-                    s += "1";
-                    filled = true;
-                    break;
-                }
-            }
-
-            if !filled {
-                s += "0";
-            }
-
-            output = s + &output;
-            c = c << 1;
-            if c % 2_u64.pow(8) == 0 {
-                output += "\n";
-            }
-        }
-        write!(f, "{}", output)
-    }
-}
-*/
