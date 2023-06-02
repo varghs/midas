@@ -97,3 +97,17 @@ impl PreShiftOperations for Bitboard {
     fn so_we_one(&self) -> Self {(*self & NOTAFILE) >> 9}
     fn no_we_one(&self) -> Self {(*self & NOTAFILE) << 7}
 }
+
+trait RotateShiftOperations {
+    fn rotate_left (&self, s: isize) -> Self;
+    fn rotate_right (&self, s: isize) -> Self;
+}
+
+impl RotateShiftOperations for Bitboard{
+    fn rotate_left (&self, s: isize) -> Self {
+        (*self << s) | (*self >> (64 - s))
+    }
+    fn rotate_right (&self, s: isize) -> Self {
+        (*self >> s) | (*self << (64 - s))
+    }
+}
