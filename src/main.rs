@@ -15,6 +15,5 @@ fn main() {
     let mut boards: [Bitboard; 8] = [black, white, pawns, rooks, knights, bishops, queens, kings];
     let board: Board = Board { boards };
 
-    set_bit!(boards[3], Square::d5);
     print!("{}", board);
 }
