@@ -68,9 +68,3 @@ impl BitwiseOperations for Bitboard {
         *self & o == 0
     }
 }
-
-trait PostShiftOperations {
-    fn sout_one(&self) -> Self;
-    fn nort_one(&self) -> Self;
-    fn east_one(&self) -> Self;
-}
