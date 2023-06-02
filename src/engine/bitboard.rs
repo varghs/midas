@@ -29,6 +29,9 @@ pub type Bitboard = u64;
 const EMPTY: Bitboard = 0;
 const UNIVERSE: Bitboard = 0xffffffffffffffff;
 
+const NOTAFILE: Bitboard = 0xfefefefefefefefe;
+const NOTHFILE: Bitboard = 0x7f7f7f7f7f7f7f7f;
+
 pub fn print_bitboard(b: Bitboard) {
     for rank in (0..8).rev() {
         for file in 0..8 {
@@ -64,4 +67,10 @@ impl BitwiseOperations for Bitboard {
     fn disjoint(&self, o: Self) -> bool {
         *self & o == 0
     }
+}
+
+trait PostShiftOperations {
+    fn sout_one(&self) -> Self;
+    fn nort_one(&self) -> Self;
+    fn east_one(&self) -> Self;
 }
