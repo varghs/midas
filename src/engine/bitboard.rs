@@ -24,6 +24,13 @@ macro_rules! pop_bit {
     };
 }
 
+#[macro_export]
+macro_rules! tog_bit {
+    ($bitboard:expr, $square:expr) => {
+        $bitboard ^= ((1 as u64) << $square)
+    };
+}
+
 pub type Bitboard = u64;
 
 const EMPTY: Bitboard = 0;
@@ -70,19 +77,23 @@ impl BitwiseOperations for Bitboard {
 }
 
 trait PreShiftOperations {
-    fn east_one (&self) -> Self;
-    fn no_ea_one (&self) -> Self;
-    fn so_ea_one (&self) -> Self;
-    fn west_one (&self) -> Self;
-    fn so_we_one (&self) -> Self;
-    fn no_we_one (&self) -> Self;
+    fn nort_one(&self) -> Self;
+    fn sout_one(&self) -> Self;
+    fn east_one(&self) -> Self;
+    fn no_ea_one(&self) -> Self;
+    fn so_ea_one(&self) -> Self;
+    fn west_one(&self) -> Self;
+    fn so_we_one(&self) -> Self;
+    fn no_we_one(&self) -> Self;
 }
 
 impl PreShiftOperations for Bitboard {
-    fn east_one (&self) -> Self {(self & NOTHFILE) << 1}
-    fn no_ea_one (&self) -> Self {(self & NOTHFILE) << 9}
-    fn so_ea_one (&self) -> Self {(self & NOTHFILE) >> 7}
-    fn west_one (&self) -> Self {(self & NOTAFILE) >> 1}
-    fn so_we_one (&self) -> Self {(self & NOTAFILE) >> 9}
-    fn no_we_one (&self) -> Self {(self & NOTAFILE) << 7}
+    fn nort_one(&self) -> Self {*self << 8}
+    fn sout_one(&self) -> Self {*self >> 8}
+    fn east_one(&self) -> Self {(*self & NOTHFILE) << 1}
+    fn no_ea_one(&self) -> Self {(*self & NOTHFILE) << 9}
+    fn so_ea_one(&self) -> Self {(*self & NOTHFILE) >> 7}
+    fn west_one(&self) -> Self {(*self & NOTAFILE) >> 1}
+    fn so_we_one(&self) -> Self {(*self & NOTAFILE) >> 9}
+    fn no_we_one(&self) -> Self {(*self & NOTAFILE) << 7}
 }
