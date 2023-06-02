@@ -1,10 +1,19 @@
 use super::bitboard::Bitboard;
 use std::convert::TryFrom;
 use std::fmt::Display;
+use std::ops::Shl;
 
 use crate::get_bit;
 
-#[rustfmt::skip]
+// #[non_exhaustive]
+// struct MyEnum;
+
+// impl MyEnum {
+//     pub const A: i32 = 123;
+//     pub const B: i32 = 456;
+// }
+
+[rustfmt::skip]
 pub enum Square {
   a1, b1, c1, d1, e1, f1, g1, h1,
   a2, b2, c2, d2, e2, f2, g2, h2,
@@ -88,11 +97,17 @@ impl Board {
 impl Display for Board {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut output: String = String::new();
+        output += "\n";
         for rank in (0..8).rev() {
             for file in 0..8 {
                 let square = rank * 8 + file;
                 let mut filled = false;
 
+                // print ranks
+                if file == 0 {
+                    output += format!(" {}  ", rank + 1).as_str();
+                }
+                
                 for board_idx in 2..8 {
                     match get_bit!(self.boards[board_idx], square) {
                         true => {
@@ -110,6 +125,8 @@ impl Display for Board {
             }
             output += "\n";
         }
+        // print files 
+        output += "\n    a b c d e f g h ";
 
         write!(f, "{}", output)
     }
