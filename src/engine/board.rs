@@ -2,6 +2,8 @@ use super::bitboard::Bitboard;
 use std::convert::TryFrom;
 use std::fmt::Display;
 
+use crate::get_bit;
+
 #[rustfmt::skip]
 pub enum Square {
   a1, b1, c1, d1, e1, f1, g1, h1,
@@ -80,5 +82,35 @@ impl Board {
 
     fn get_piece_of_color(&self, p: Piece, c: Color) -> Bitboard {
         self.get_piece(p) & self.get_color(c)
+    }
+}
+
+impl Display for Board {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut output: String = String::new();
+        for rank in (0..8).rev() {
+            for file in 0..8 {
+                let square = rank * 8 + file;
+                let mut filled = false;
+
+                for board_idx in 2..8 {
+                    match get_bit!(self.boards[board_idx], square) {
+                        true => {
+                            filled = true;
+                            let p: Piece = board_idx.try_into().unwrap();
+                            output += format!("{} ", p).as_str();
+                        }
+                        false => (),
+                    }
+                }
+
+                if !filled {
+                    output += ". ";
+                }
+            }
+            output += "\n";
+        }
+
+        write!(f, "{}", output)
     }
 }

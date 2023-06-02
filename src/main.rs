@@ -1,11 +1,6 @@
-mod debug;
 mod test;
 
-use debug::*;
-
-use midas::engine::{bitboard::{print_bitboard, Bitboard}, board::{self, Board}};
-use midas::{pop_bit, set_bit};
-use midas::engine::board::Square;
+use midas::engine::{bitboard::Bitboard, board::Board};
 
 fn main() {
     let pawns: Bitboard = 0x00FF00000000FF00;
@@ -20,5 +15,5 @@ fn main() {
     let boards: [Bitboard; 8] = [black, white, pawns, rooks, knights, bishops, queens, kings];
     let board: Board = Board { boards };
 
-    draw_board(&board);
+    print!("{}", board);
 }
