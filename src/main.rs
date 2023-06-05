@@ -1,6 +1,6 @@
 mod test;
 
-use midas::engine::{bitboard::Bitboard, board::Board};
+use midas::{engine::{bitboard::Bitboard, board::{Board, Square}}, set_bit};
 
 fn main() {
     let pawns: Bitboard = 0x00FF00000000FF00;
@@ -12,7 +12,7 @@ fn main() {
     let black: Bitboard = 0xFFFF000000000000;
     let white: Bitboard = 0x000000000000FFFF;
 
-    let boards: [Bitboard; 8] = [black, white, pawns, rooks, knights, bishops, queens, kings];
+    let mut boards: [Bitboard; 8] = [black, white, pawns, rooks, knights, bishops, queens, kings];
     let board: Board = Board { boards };
 
     print!("{}", board);

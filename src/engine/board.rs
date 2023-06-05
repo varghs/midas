@@ -1,6 +1,7 @@
 use super::bitboard::Bitboard;
 use std::convert::TryFrom;
 use std::fmt::Display;
+use std::ops::Shl;
 
 use crate::get_bit;
 
@@ -236,11 +237,17 @@ impl Board {
 impl Display for Board {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut output: String = String::new();
+        output += "\n";
         for rank in (0..8).rev() {
             for file in 0..8 {
                 let square = rank * 8 + file;
                 let mut filled = false;
 
+                // print ranks
+                if file == 0 {
+                    output += format!(" {}  ", rank + 1).as_str();
+                }
+                
                 for board_idx in 2..8 {
                     match get_bit!(self.boards[board_idx], square) {
                         true => {
@@ -258,6 +265,8 @@ impl Display for Board {
             }
             output += "\n";
         }
+        // print files 
+        output += "\n    a b c d e f g h ";
 
         write!(f, "{}", output)
     }
