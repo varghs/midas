@@ -100,7 +100,7 @@ impl BitwiseOperations for Bitboard {
     }
 
     fn disjoint(&self, o: Self) -> bool {
-        *self & o == 0
+        *self & o == EMPTY
     }
 }
 
