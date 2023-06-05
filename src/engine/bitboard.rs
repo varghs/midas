@@ -68,15 +68,15 @@ trait LS1B {
     fn pop_lsb(&self) -> Option<Square>;
 }
 impl LS1B for Bitboard {
+    /**
+     * bitScanForward
+     * @author Kim Walisch (2012)
+     * @param bb bitboard to scan
+     * @precondition bb != 0
+     * @return index (0..63) of least significant one bit
+     */
     fn pop_lsb(&self) -> Option<Square> {
         // using some fancy stuff
-        /**
-         * bitScanForward
-         * @author Kim Walisch (2012)
-         * @param bb bitboard to scan
-         * @precondition bb != 0
-         * @return index (0..63) of least significant one bit
-         */
         const debruijn64: u64 = 0x03f79d71b4cb0a89;
         if *self == 0 {
             return None;
