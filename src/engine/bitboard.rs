@@ -1,3 +1,5 @@
+use super::board::Square;
+
 // Gets value at bit
 #[macro_export]
 macro_rules! get_bit {
@@ -6,7 +8,6 @@ macro_rules! get_bit {
     };
 }
 
-
 // Sets bit to 1
 #[macro_export]
 macro_rules! set_bit {
@@ -14,7 +15,6 @@ macro_rules! set_bit {
         $bitboard |= ((1 as u64) << $square)
     };
 }
-
 
 // Resets bit to 0
 #[macro_export]
@@ -49,16 +49,44 @@ pub fn print_bitboard(b: Bitboard) {
                 print!("{} ", rank + 1);
             }
 
-            print!(
-                "{} ",
-                get_bit!(b, square) as u8
-            );
+            print!("{} ", get_bit!(b, square) as u8);
         }
         print!("\n");
     }
 
     // prints file letters
     print!("  a b c d e f g h\n")
+}
+
+const INDEX_64: [u64; 64] = [
+    0, 47, 1, 56, 48, 27, 2, 60, 57, 49, 41, 37, 28, 16, 3, 61, 54, 58, 35, 52, 50, 42, 21, 44, 38,
+    32, 29, 23, 17, 11, 4, 62, 46, 55, 26, 59, 40, 36, 15, 53, 34, 51, 20, 43, 31, 22, 10, 45, 25,
+    39, 14, 33, 19, 30, 9, 24, 13, 18, 8, 12, 7, 6, 5, 63,
+];
+
+trait LS1B {
+    fn pop_lsb(&self) -> Option<Square>;
+}
+impl LS1B for Bitboard {
+    fn pop_lsb(&self) -> Option<Square> {
+        // using some fancy stuff
+        /**
+         * bitScanForward
+         * @author Kim Walisch (2012)
+         * @param bb bitboard to scan
+         * @precondition bb != 0
+         * @return index (0..63) of least significant one bit
+         */
+        const debruijn64: u64 = 0x03f79d71b4cb0a89;
+        if *self == 0 {
+            return None;
+        }
+        return Some(
+            INDEX_64[(((*self ^ (*self - 1)) * debruijn64) >> 58) as usize]
+                .try_into()
+                .unwrap(),
+        );
+    }
 }
 
 trait BitwiseOperations {
@@ -88,26 +116,42 @@ trait PreShiftOperations {
 }
 
 impl PreShiftOperations for Bitboard {
-    fn nort_one(&self) -> Self {*self << 8}
-    fn sout_one(&self) -> Self {*self >> 8}
-    fn east_one(&self) -> Self {(*self & NOTHFILE) << 1}
-    fn no_ea_one(&self) -> Self {(*self & NOTHFILE) << 9}
-    fn so_ea_one(&self) -> Self {(*self & NOTHFILE) >> 7}
-    fn west_one(&self) -> Self {(*self & NOTAFILE) >> 1}
-    fn so_we_one(&self) -> Self {(*self & NOTAFILE) >> 9}
-    fn no_we_one(&self) -> Self {(*self & NOTAFILE) << 7}
+    fn nort_one(&self) -> Self {
+        *self << 8
+    }
+    fn sout_one(&self) -> Self {
+        *self >> 8
+    }
+    fn east_one(&self) -> Self {
+        (*self & NOTHFILE) << 1
+    }
+    fn no_ea_one(&self) -> Self {
+        (*self & NOTHFILE) << 9
+    }
+    fn so_ea_one(&self) -> Self {
+        (*self & NOTHFILE) >> 7
+    }
+    fn west_one(&self) -> Self {
+        (*self & NOTAFILE) >> 1
+    }
+    fn so_we_one(&self) -> Self {
+        (*self & NOTAFILE) >> 9
+    }
+    fn no_we_one(&self) -> Self {
+        (*self & NOTAFILE) << 7
+    }
 }
 
 trait RotateShiftOperations {
-    fn rotate_left (&self, s: isize) -> Self;
-    fn rotate_right (&self, s: isize) -> Self;
+    fn rotate_left(&self, s: isize) -> Self;
+    fn rotate_right(&self, s: isize) -> Self;
 }
 
-impl RotateShiftOperations for Bitboard{
-    fn rotate_left (&self, s: isize) -> Self {
+impl RotateShiftOperations for Bitboard {
+    fn rotate_left(&self, s: isize) -> Self {
         (*self << s) | (*self >> (64 - s))
     }
-    fn rotate_right (&self, s: isize) -> Self {
+    fn rotate_right(&self, s: isize) -> Self {
         (*self >> s) | (*self << (64 - s))
     }
 }

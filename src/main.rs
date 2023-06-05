@@ -1,6 +1,12 @@
 mod test;
 
-use midas::{engine::{bitboard::Bitboard, board::{Board, Square}}, set_bit};
+use midas::{
+    engine::{
+        bitboard::Bitboard,
+        board::{Board, Square},
+    },
+    set_bit,
+};
 
 fn main() {
     let pawns: Bitboard = 0x00FF00000000FF00;
