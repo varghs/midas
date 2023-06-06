@@ -84,4 +84,7 @@ impl Moves for Move {
         b.boards[self.get_color() as usize] ^= from_to_bb;
         b.double_pawn_push = true;
     }
+
+    fn king_castle(&self, b: &mut Board) {
+    }
 }

@@ -1,4 +1,5 @@
 use super::board::Square;
+use super::board::Color;
 
 // Gets value at bit
 #[macro_export]
@@ -29,7 +30,7 @@ macro_rules! tog_bit {
     ($bitboard:expr, $square:expr) => {
         $bitboard ^= ((1 as u64) << $square)
     };
-}
+}    
 
 pub type Bitboard = u64;
 
@@ -56,6 +57,22 @@ pub fn print_bitboard(b: Bitboard) {
 
     // prints file letters
     print!("  a b c d e f g h\n")
+}
+
+
+/* Attacks */
+// Pawn attack tables
+static PAWN_ATTACKS: [[Bitboard; 64]; 2] = [[EMPTY; 64]; 2]; 
+
+fn mask_pawn_attacks(square: Square, side: Color) -> Bitboard {
+    let attacks: Bitboard = 0;
+    let mut bitboard: Bitboard = 0;
+    set_bit!(bitboard, square as u64);
+
+    if let Color::White = side {
+    }
+
+    attacks
 }
 
 const INDEX_64: [u64; 64] = [
