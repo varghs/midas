@@ -64,7 +64,7 @@ const INDEX_64: [u64; 64] = [
     39, 14, 33, 19, 30, 9, 24, 13, 18, 8, 12, 7, 6, 5, 63,
 ];
 
-trait LS1B {
+pub trait LS1B {
     fn pop_lsb(&self) -> Option<Square>;
 }
 impl LS1B for Bitboard {

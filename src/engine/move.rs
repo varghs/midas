@@ -1,11 +1,11 @@
-use super::board::Square;
-use super::board::Piece;
-use super::board::Color;
 use super::bitboard::Bitboard;
 use super::board::Board;
+use super::board::Color;
+use super::board::Piece;
+use super::board::Square;
 // 000000, 000000, 0        , 0      , 0        , 0
 //  from ,   to  , promotion, capture, special 1, special 0
-pub struct Move(u16, Piece, Color); 
+pub struct Move(u16, Piece, Color);
 
 impl Move {
     fn get_from(&self) -> Square {
@@ -66,7 +66,7 @@ impl Moves for Move {
     fn quiet_moves(&self, b: &mut Board) {
         let from_bb = ONE << (self.get_from() as u64);
         let to_bb = ONE << (self.get_to() as u64);
-        let from_to_bb  = from_bb ^ to_bb;
+        let from_to_bb = from_bb ^ to_bb;
         b.boards[self.get_piece() as usize] ^= from_to_bb;
         b.boards[self.get_color() as usize] ^= from_to_bb;
     }
