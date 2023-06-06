@@ -5,7 +5,7 @@ use super::board::Piece;
 use super::board::Square;
 // 000000, 000000, 0        , 0      , 0        , 0
 //  from ,   to  , promotion, capture, special 1, special 0
-pub struct Move(u16, Piece, Color, Option<Piece>);
+pub struct Move(u16, Piece, Color, Option<Piece>, Option<Color>);
 
 impl Move {
     fn get_from(&self) -> Square {
@@ -45,6 +45,9 @@ impl Move {
     fn get_captured_piece(&self) -> Option<Piece> {
         self.3
     }
+    fn get_captured_color(&self) -> Option<Color> {
+        self.4
+    }
 }
 
 trait Moves {
@@ -83,5 +86,76 @@ impl Moves for Move {
         b.boards[self.get_piece() as usize] ^= from_to_bb;
         b.boards[self.get_color() as usize] ^= from_to_bb;
         b.double_pawn_push = true;
+    }
+    fn captures(&self, b: &mut Board) {
+        let from_bb = ONE << (self.get_from() as u64);
+        let to_bb = ONE << (self.get_to() as u64);
+        let from_to_bb = from_bb ^ to_bb;
+        b.boards[self.get_piece() as usize] ^= from_to_bb;
+        b.boards[self.get_color() as usize] ^= from_to_bb;
+        // xor with to_bb to get rid of the captured piece
+        b.boards[self.get_captured_piece().unwrap() as usize] ^= to_bb;
+        b.boards[self.get_captured_color().unwrap() as usize] ^= to_bb;
+        b.double_pawn_push = false;
+    }
+    fn knight_promotion(&self, b: &mut Board) {
+        let from_bb = ONE << (self.get_from() as u64);
+        let to_bb = ONE << (self.get_to() as u64);
+        let from_to_bb = from_bb ^ to_bb;
+        b.boards[Piece::Knight as usize] ^= to_bb;
+        b.boards[self.get_piece() as usize] ^= from_bb;
+        b.boards[self.get_color() as usize] ^= from_to_bb;
+    }
+    fn bishop_promotion(&self, b: &mut Board) {
+        let from_bb = ONE << (self.get_from() as u64);
+        let to_bb = ONE << (self.get_to() as u64);
+        let from_to_bb = from_bb ^ to_bb;
+        b.boards[Piece::Bishop as usize] ^= to_bb;
+        b.boards[self.get_piece() as usize] ^= from_bb;
+        b.boards[self.get_color() as usize] ^= from_to_bb;
+    }
+    fn rook_promotion(&self, b: &mut Board) {
+        let from_bb = ONE << (self.get_from() as u64);
+        let to_bb = ONE << (self.get_to() as u64);
+        let from_to_bb = from_bb ^ to_bb;
+        b.boards[Piece::Rook as usize] ^= to_bb;
+        b.boards[self.get_piece() as usize] ^= from_bb;
+        b.boards[self.get_color() as usize] ^= from_to_bb;
+    }
+    fn queen_promotion(&self, b: &mut Board) {
+        let from_bb = ONE << (self.get_from() as u64);
+        let to_bb = ONE << (self.get_to() as u64);
+        let from_to_bb = from_bb ^ to_bb;
+        b.boards[Piece::Queen as usize] ^= to_bb;
+        b.boards[self.get_piece() as usize] ^= from_bb;
+        b.boards[self.get_color() as usize] ^= from_to_bb;
+    }
+
+    fn king_castle(&self, b: &mut Board) {
+        todo!()
+    }
+
+    fn queen_castle(&self, b: &mut Board) {
+        todo!()
+    }
+
+    fn ep_capture(&self, b: &mut Board) {
+        todo!()
+    }
+
+    fn knight_promo_capture(&self, b: &mut Board) {
+        todo!()
+    }
+
+    fn bishop_promo_capture(&self, b: &mut Board) {
+        todo!()
+    }
+
+    fn rook_promo_capture(&self, b: &mut Board) {
+        todo!()
+    }
+
+    fn queen_promo_capture(&self, b: &mut Board) {
+        todo!()
     }
 }

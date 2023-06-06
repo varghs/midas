@@ -4,6 +4,7 @@ use std::fmt::Display;
 
 use crate::get_bit;
 
+#[allow(non_camel_case_types)]
 #[rustfmt::skip]
 pub enum Square {
   a1, b1, c1, d1, e1, f1, g1, h1,
@@ -84,7 +85,7 @@ impl TryFrom<u64> for Square {
             61 => Ok(Square::f8),
             62 => Ok(Square::g8),
             63 => Ok(Square::h8),
-            _ => Err("Invalid conversion".to_string())
+            _ => Err("Invalid conversion".to_string()),
         }
     }
 }
@@ -157,7 +158,7 @@ impl TryFrom<u16> for Square {
             61 => Ok(Square::f8),
             62 => Ok(Square::g8),
             63 => Ok(Square::h8),
-            _ => Err("Invalid conversion".to_string())
+            _ => Err("Invalid conversion".to_string()),
         }
     }
 }
@@ -212,6 +213,9 @@ pub enum Color {
 pub struct Board {
     pub boards: [Bitboard; 8],
     pub double_pawn_push: bool,
+    pub king_side_castle: bool,
+    pub queen_side_castle: bool,
+    pub en_pessant: bool,
 }
 
 impl Board {
@@ -247,7 +251,7 @@ impl Display for Board {
                 if file == 0 {
                     output += format!(" {}  ", rank + 1).as_str();
                 }
-                
+
                 for board_idx in 2..8 {
                     match get_bit!(self.boards[board_idx], square) {
                         true => {
@@ -265,7 +269,7 @@ impl Display for Board {
             }
             output += "\n";
         }
-        // print files 
+        // print files
         output += "\n    a b c d e f g h ";
 
         write!(f, "{}", output)
