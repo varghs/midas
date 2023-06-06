@@ -1,7 +1,6 @@
 use super::bitboard::Bitboard;
 use std::convert::TryFrom;
 use std::fmt::Display;
-use std::ops::Shl;
 
 use crate::get_bit;
 
@@ -212,6 +211,7 @@ pub enum Color {
 
 pub struct Board {
     pub boards: [Bitboard; 8],
+    pub double_pawn_push: bool,
 }
 
 impl Board {
