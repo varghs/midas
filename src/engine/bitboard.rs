@@ -77,12 +77,12 @@ impl LS1B for Bitboard {
      */
     fn pop_lsb(&self) -> Option<Square> {
         // using some fancy stuff
-        const debruijn64: u64 = 0x03f79d71b4cb0a89;
+        const DEBRUIJN_64: u64 = 0x03f79d71b4cb0a89;
         if *self == 0 {
             return None;
         }
         return Some(
-            INDEX_64[(((*self ^ (*self - 1)) * debruijn64) >> 58) as usize]
+            INDEX_64[(((*self ^ (*self - 1)) * DEBRUIJN_64) >> 58) as usize]
                 .try_into()
                 .unwrap(),
         );
