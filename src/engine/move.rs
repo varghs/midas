@@ -5,7 +5,7 @@ use super::bitboard::Bitboard;
 use super::board::Board;
 // 000000, 000000, 0        , 0      , 0        , 0
 //  from ,   to  , promotion, capture, special 1, special 0
-pub struct Move(u16, Piece, Color); 
+pub struct Move(u16, Piece, Color, Option<Piece>); 
 
 impl Move {
     fn get_from(&self) -> Square {
@@ -41,6 +41,10 @@ impl Move {
     fn get_color(&self) -> Color {
         self.2
     }
+
+    fn get_captured_piece(&self) -> Option<Piece> {
+        self.3
+    }
 }
 
 trait Moves {
@@ -69,5 +73,15 @@ impl Moves for Move {
         let from_to_bb  = from_bb ^ to_bb;
         b.boards[self.get_piece() as usize] ^= from_to_bb;
         b.boards[self.get_color() as usize] ^= from_to_bb;
+        b.double_pawn_push = false;
+    }
+
+    fn double_pawn_push(&self, b: &mut Board) {
+        let from_bb = ONE << (self.get_from() as u64);
+        let to_bb = ONE << (self.get_to() as u64);
+        let from_to_bb  = from_bb ^ to_bb;
+        b.boards[self.get_piece() as usize] ^= from_to_bb;
+        b.boards[self.get_color() as usize] ^= from_to_bb;
+        b.double_pawn_push = true;
     }
 }
