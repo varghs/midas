@@ -87,7 +87,6 @@ impl Moves for Move {
         b.double_pawn_push = true;
     }
 
-    fn king_castle(&self, b: &mut Board) {
     fn captures(&self, b: &mut Board) {
         let from_bb = ONE << (self.get_from() as u64);
         let to_bb = ONE << (self.get_to() as u64);
@@ -179,6 +178,17 @@ impl Moves for Move {
         let to_bb = ONE << (self.get_to() as u64);
         let from_to_bb = from_bb ^ to_bb;
         b.boards[Piece::Rook as usize] ^= to_bb;
+        b.boards[self.get_piece() as usize] ^= from_bb;
+        b.boards[self.get_color() as usize] ^= from_to_bb;
+        // captured piece
+        b.boards[self.get_captured_piece().unwrap() as usize] ^= to_bb;
+        b.boards[self.get_captured_color().unwrap() as usize] ^= to_bb;
+    }
+    fn queen_promo_capture(&self, b: &mut Board) {
+        let from_bb = ONE << (self.get_from() as u64);
+        let to_bb = ONE << (self.get_to() as u64);
+        let from_to_bb = from_bb ^ to_bb;
+        b.boards[Piece::Queen as usize] ^= to_bb;
         b.boards[self.get_piece() as usize] ^= from_bb;
         b.boards[self.get_color() as usize] ^= from_to_bb;
         // captured piece

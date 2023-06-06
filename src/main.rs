@@ -18,8 +18,14 @@ fn main() {
     let black: Bitboard = 0xFFFF000000000000;
     let white: Bitboard = 0x000000000000FFFF;
 
-    let mut boards: [Bitboard; 8] = [black, white, pawns, rooks, knights, bishops, queens, kings];
-    let board: Board = Board { boards };
+    let boards: [Bitboard; 8] = [black, white, pawns, rooks, knights, bishops, queens, kings];
+    let board: Board = Board {
+        boards,
+        double_pawn_push: false,
+        king_side_castle: false,
+        queen_side_castle: false,
+        en_pessant: false,
+    };
 
     print!("{}", board);
 }
