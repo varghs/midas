@@ -78,31 +78,10 @@ const INDEX_64_KIM: [u64; 64] = [
     32, 29, 23, 17, 11, 4, 62, 46, 55, 26, 59, 40, 36, 15, 53, 34, 51, 20, 43, 31, 22, 10, 45, 25,
     39, 14, 33, 19, 30, 9, 24, 13, 18, 8, 12, 7, 6, 5, 63,
 ];
-#[rustfmt::skip]
-const INDEX_64_LAUTER: [u64; 64] = [
-    0,  1, 48,  2, 57, 49, 28,  3,
-   61, 58, 50, 42, 38, 29, 17,  4,
-   62, 55, 59, 36, 53, 51, 43, 22,
-   45, 39, 33, 30, 24, 18, 12,  5,
-   63, 47, 56, 27, 60, 41, 37, 16,
-   54, 35, 52, 21, 44, 32, 23, 11,
-   46, 26, 40, 15, 34, 20, 31, 10,
-   25, 14, 19,  9, 13,  8,  7,  6
-];
-#[rustfmt::skip]
-const LSB_64_TABLE: [u64; 64] = [
-   63, 30,  3, 32, 59, 14, 11, 33,
-   60, 24, 50,  9, 55, 19, 21, 34,
-   61, 29,  2, 53, 51, 23, 41, 18,
-   56, 28,  1, 43, 46, 27,  0, 35,
-   62, 31, 58,  4,  5, 49, 54,  6,
-   15, 52, 12, 40,  7, 42, 45, 16,
-   25, 57, 48, 13, 10, 39,  8, 44,
-   20, 47, 38, 22, 17, 37, 36, 26
-];
 
 pub trait LS1B {
-    fn pop_lsb(&self) -> Option<Square>;
+    fn index_of_lsb(&self) -> Option<Square>;
+    fn pop_lsb(&mut self) -> Option<Square>;
 }
 impl LS1B for Bitboard {
     /**
@@ -112,7 +91,7 @@ impl LS1B for Bitboard {
      * @precondition bb != 0
      * @return index (0..63) of least significant one bit
      */
-    fn pop_lsb(&self) -> Option<Square> {
+    fn index_of_lsb(&self) -> Option<Square> {
         // ********* KIM WALISCH *******
         // using some fancy stuff
         const DEBRUIJN_64: u64 = 0x03f79d71b4cb0a89;
@@ -130,6 +109,34 @@ impl LS1B for Bitboard {
                 .try_into()
                 .unwrap(),
         );
+    }
+    fn pop_lsb(&mut self) -> Option<Square> {
+        // ********* KIM WALISCH *******
+        // using some fancy stuff
+        const DEBRUIJN_64: u64 = 0x03f79d71b4cb0a89;
+        if *self == 0 {
+            return None;
+        }
+        // println!(
+        //     "deb index is {}",
+        //     (((*self ^ (*self).wrapping_sub(1)).wrapping_mul(DEBRUIJN_64)).wrapping_shr(58))
+        //         as usize
+        // );
+        let index_of_lsb = INDEX_64_KIM[(((*self ^ (*self).wrapping_sub(1))
+            .wrapping_mul(DEBRUIJN_64))
+        .wrapping_shr(58)) as usize];
+
+        // pop the lsb
+        let ls1b_bb = (*self) & (*self).wrapping_neg();
+        // println!("{:#066b}\n{:#066b}", *self, (*self).wrapping_neg());
+        // println!("ls1b is this \n{:#066b}", ls1b_bb);
+
+        *self ^= ls1b_bb;
+
+        // println!("final bb: \n{:#066b}", *self);
+        // println!();
+
+        return Some(index_of_lsb.try_into().unwrap());
     }
 }
 
