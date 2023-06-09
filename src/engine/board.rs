@@ -1,6 +1,7 @@
 use super::bitboard::Bitboard;
 use std::convert::TryFrom;
 use std::fmt::Display;
+use std::ops::Shl;
 
 use crate::get_bit;
 
@@ -16,6 +17,13 @@ pub enum Square {
   a6, b6, c6, d6, e6, f6, g6, h6,
   a7, b7, c7, d7, e7, f7, g7, h7,
   a8, b8, c8, d8, e8, f8, g8, h8,
+}
+
+impl Shl<Square> for Bitboard {
+    type Output = Bitboard;
+    fn shl(self, rhs: Square) -> Self::Output {
+        self << rhs as u64
+    }
 }
 
 impl TryFrom<u64> for Square {
@@ -221,9 +229,23 @@ pub struct Board {
 
 impl Board {
     fn new() -> Self {
-        // let mut arr: [Bitboard; 8] = [];
-        // let mut b = Board { boards: arr };
-        todo!()
+        let pawns: Bitboard = 0x00FF00000000FF00;
+        let rooks: Bitboard = 0x8100000000000081;
+        let knights: Bitboard = 0x4200000000000042;
+        let bishops: Bitboard = 0x2400000000000024;
+        let queens: Bitboard = 0x0800000000000008;
+        let kings: Bitboard = 0x1000000000000010;
+        let black: Bitboard = 0xFFFF000000000000;
+        let white: Bitboard = 0x000000000000FFFF;
+
+        let boards: [Bitboard; 8] = [black, white, pawns, rooks, knights, bishops, queens, kings];
+        Board {
+            boards,
+            double_pawn_push: false,
+            king_side_castle: false,
+            queen_side_castle: false,
+            en_pessant: false,
+        }
     }
 
     fn get_piece(&self, p: Piece) -> Bitboard {

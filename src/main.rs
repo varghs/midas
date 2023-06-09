@@ -2,13 +2,15 @@ mod test;
 
 use midas::{
     engine::{
-        bitboard::Bitboard,
-        board::{Board, Square},
+        bitboard::{Bitboard, print_bitboard},
+        board::{Board, Square, Color},
     },
     set_bit,
+    engine::attacks::pawn::PawnAttacks
 };
 
 fn main() {
+    /*
     let pawns: Bitboard = 0x00FF00000000FF00;
     let rooks: Bitboard = 0x8100000000000081;
     let knights: Bitboard = 0x4200000000000042;
@@ -28,4 +30,7 @@ fn main() {
     };
 
     print!("{}", board);
+    */
+
+    print_bitboard(PawnAttacks::mask_pawn_attacks(Square::g2, Color::White));
 }

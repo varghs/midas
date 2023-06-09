@@ -59,20 +59,6 @@ pub fn print_bitboard(b: Bitboard) {
     print!("  a b c d e f g h\n")
 }
 
-/* Attacks */
-// Pawn attack tables
-static PAWN_ATTACKS: [[Bitboard; 64]; 2] = [[EMPTY; 64]; 2];
-
-fn mask_pawn_attacks(square: Square, side: Color) -> Bitboard {
-    let attacks: Bitboard = 0;
-    let mut bitboard: Bitboard = 0;
-    set_bit!(bitboard, square as u64);
-
-    if let Color::White = side {}
-
-    attacks
-}
-
 const INDEX_64_KIM: [u64; 64] = [
     0, 47, 1, 56, 48, 27, 2, 60, 57, 49, 41, 37, 28, 16, 3, 61, 54, 58, 35, 52, 50, 42, 21, 44, 38,
     32, 29, 23, 17, 11, 4, 62, 46, 55, 26, 59, 40, 36, 15, 53, 34, 51, 20, 43, 31, 22, 10, 45, 25,
