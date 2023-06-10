@@ -1,8 +1,5 @@
+use midas::engine::{bitboard::*, square::Square};
 use std::time::Instant;
-use midas::engine::{
-    bitboard::*,
-    board::Square,
-};
 
 #[test]
 fn lsb1_1() {
@@ -11,7 +8,6 @@ fn lsb1_1() {
     // Test case with bit at index 0
     assert_eq!(bb_1.index_of_lsb(), Some(Square::a1));
 }
-
 
 #[test]
 fn lsb1_4() {

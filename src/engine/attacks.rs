@@ -12,7 +12,7 @@ impl AttackTables {
         todo!();
     }
 
-    fn populate_leapers_attacks() {
-        
+    fn populate_leapers_attacks(&mut self) {
+        self.pawn_attacks.populate();
     }
 }

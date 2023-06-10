@@ -2,7 +2,7 @@ use super::bitboard::Bitboard;
 use super::board::Board;
 use super::board::Color;
 use super::board::Piece;
-use super::board::Square;
+use super::square::Square;
 // 000000, 000000, 0        , 0      , 0        , 0
 //  from ,   to  , promotion, capture, special 1, special 0
 pub struct Move(u16, Piece, Color, Option<Piece>, Option<Color>);

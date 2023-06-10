@@ -1,5 +1,4 @@
-use super::board::Color;
-use super::board::Square;
+use super::square::Square;
 
 // Gets value at bit
 #[macro_export]
