@@ -60,4 +60,34 @@ mod tests {
         let end_time = Instant::now();
         println!("Elapsed time {:?}", end_time - start_time);
     }
+
+    #[test]
+    fn pawn_attacks_reg_white() {
+        let mut bitboard: Bitboard = EMPTY;
+    }
+
+    #[test]
+    fn pawn_attacks_reg_black() {
+        let mut bitboard: Bitboard = EMPTY;
+    }
+
+    #[test]
+    fn pawn_attacks_h_white() {
+        let mut bitboard: Bitboard = EMPTY;
+    }
+
+    #[test]
+    fn pawn_attacks_h_black() {
+        let mut bitboard: Bitboard = EMPTY;
+    }
+
+    #[test]
+    fn pawn_attacks_a_waite() {
+        let mut bitboard: Bitboard = EMPTY;
+    }
+
+    #[test]
+    fn pawn_attacks_a_black() {
+        let mut bitboard: Bitboard = EMPTY;
+    }
 }

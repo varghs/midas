@@ -1,10 +1,13 @@
-use crate::{engine::{bitboard::Bitboard, board::{Square, Color}}, set_bit};
-
-const NOTAFILE: Bitboard = 0xfefefefefefefefe;
-const NOTHFILE: Bitboard = 0x7f7f7f7f7f7f7f7f;
+use crate::{
+    engine::{
+        bitboard::{Bitboard, NOTAFILE, NOTHFILE},
+        board::{Color, Square},
+    },
+    set_bit,
+};
 
 pub struct PawnAttacks {
-    pawn_attacks: [[Bitboard; 64]; 2] // [color][square]
+    pawn_attacks: [[Bitboard; 64]; 2], // [color][square]
 }
 
 impl PawnAttacks {
@@ -20,11 +23,20 @@ impl PawnAttacks {
 
         match color {
             Color::White => {
-                if bitboard & NOTHFILE == 0 {
+                if bitboard & NOTHFILE != 0 {
                     attacks |= bitboard << 9;
                 }
-            },
+                if bitboard & NOTAFILE != 0 {
+                    attacks |= bitboard << 7;
+                }
+            }
             Color::Black => {
+                if bitboard & NOTHFILE != 0 {
+                    attacks |= bitboard >> 7;
+                }
+                if bitboard & NOTAFILE != 0 {
+                    attacks |= bitboard >> 9;
+                }
             }
         }
 

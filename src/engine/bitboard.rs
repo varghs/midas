@@ -34,11 +34,11 @@ macro_rules! tog_bit {
 
 pub type Bitboard = u64;
 
-const EMPTY: Bitboard = 0;
-const UNIVERSE: Bitboard = 0xffffffffffffffff;
+pub const EMPTY: Bitboard = 0;
+pub const UNIVERSE: Bitboard = 0xffffffffffffffff;
 
-const NOTAFILE: Bitboard = 0xfefefefefefefefe;
-const NOTHFILE: Bitboard = 0x7f7f7f7f7f7f7f7f;
+pub const NOTAFILE: Bitboard = 0xfefefefefefefefe;
+pub const NOTHFILE: Bitboard = 0x7f7f7f7f7f7f7f7f;
 
 pub fn print_bitboard(b: Bitboard) {
     for rank in (0..8).rev() {
