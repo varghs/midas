@@ -11,4 +11,8 @@ impl AttackTables {
     fn populate(&mut self) {
         todo!();
     }
+
+    fn populate_leapers_attacks() {
+        
+    }
 }

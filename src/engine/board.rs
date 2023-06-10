@@ -7,7 +7,7 @@ use crate::get_bit;
 
 #[allow(non_camel_case_types)]
 #[rustfmt::skip]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy)]
 pub enum Square {
   a1, b1, c1, d1, e1, f1, g1, h1,
   a2, b2, c2, d2, e2, f2, g2, h2,
@@ -224,7 +224,7 @@ pub struct Board {
     pub double_pawn_push: bool,
     pub king_side_castle: bool,
     pub queen_side_castle: bool,
-    pub en_pessant: bool,
+    pub en_passant: bool,
 }
 
 impl Board {
@@ -244,7 +244,7 @@ impl Board {
             double_pawn_push: false,
             king_side_castle: false,
             queen_side_castle: false,
-            en_pessant: false,
+            en_passant: false,
         }
     }
 
