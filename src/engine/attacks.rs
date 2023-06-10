@@ -1,6 +1,6 @@
-use self::pawn::PawnAttacks;
-
-pub mod pawn;
+use self::pawn_attacks::PawnAttacks;
+pub mod knight_attacks;
+pub mod pawn_attacks;
 
 struct AttackTables {
     pawn_attacks: PawnAttacks,

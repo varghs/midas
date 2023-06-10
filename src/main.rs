@@ -1,7 +1,7 @@
 mod test;
 
 use midas::{
-    engine::attacks::pawn::PawnAttacks,
+    engine::attacks::knight_attacks::KnightAttacks,
     engine::{
         bitboard::{print_bitboard, Bitboard},
         board::{Board, Color},
@@ -12,10 +12,9 @@ use midas::{
 
 fn main() {
     for i in 0..64 {
-        println!("{}", i);
-        print_bitboard(PawnAttacks::mask_pawn_attacks(
+        print_bitboard(KnightAttacks::mask_knight_attacks(
             (i as u64).try_into().unwrap(),
-            Color::Black,
         ));
+        println!();
     }
 }

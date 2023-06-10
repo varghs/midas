@@ -1,10 +1,10 @@
 use midas::{
-    engine::{attacks::pawn::PawnAttacks, bitboard::*, board::Color, square::Square},
+    engine::{attacks::pawn_attacks::PawnAttacks, bitboard::*, board::Color, square::Square},
     set_bit,
 };
 
 #[test]
-fn pawn_attacks_reg_white() {
+fn reg_white() {
     let mut bitboard: Bitboard = EMPTY;
     set_bit!(bitboard, Square::e4);
     set_bit!(bitboard, Square::c4);
@@ -15,7 +15,7 @@ fn pawn_attacks_reg_white() {
 }
 
 #[test]
-fn pawn_attacks_reg_black() {
+fn reg_black() {
     let mut bitboard: Bitboard = EMPTY;
     set_bit!(bitboard, Square::e5);
     set_bit!(bitboard, Square::c5);
@@ -26,7 +26,7 @@ fn pawn_attacks_reg_black() {
 }
 
 #[test]
-fn pawn_attacks_h_white() {
+fn h_white() {
     let mut bitboard: Bitboard = EMPTY;
     set_bit!(bitboard, Square::g7);
     assert_eq!(
@@ -36,7 +36,7 @@ fn pawn_attacks_h_white() {
 }
 
 #[test]
-fn pawn_attacks_h_black() {
+fn h_black() {
     let mut bitboard: Bitboard = EMPTY;
     set_bit!(bitboard, Square::g4);
     assert_eq!(
@@ -46,7 +46,7 @@ fn pawn_attacks_h_black() {
 }
 
 #[test]
-fn pawn_attacks_a_waite() {
+fn a_white() {
     let mut bitboard: Bitboard = EMPTY;
     set_bit!(bitboard, Square::b4);
     assert_eq!(
@@ -56,7 +56,7 @@ fn pawn_attacks_a_waite() {
 }
 
 #[test]
-fn pawn_attacks_a_black() {
+fn a_black() {
     let mut bitboard: Bitboard = EMPTY;
     set_bit!(bitboard, Square::b6);
     assert_eq!(
@@ -66,7 +66,7 @@ fn pawn_attacks_a_black() {
 }
 
 #[test]
-fn pawn_attacks_fail() {
+fn fail() {
     let mut bitboard: Bitboard = EMPTY;
     set_bit!(bitboard, Square::e4);
     set_bit!(bitboard, Square::c4);

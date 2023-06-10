@@ -39,6 +39,9 @@ pub const UNIVERSE: Bitboard = 0xffffffffffffffff;
 pub const NOTAFILE: Bitboard = 0xfefefefefefefefe;
 pub const NOTHFILE: Bitboard = 0x7f7f7f7f7f7f7f7f;
 
+pub const NOTABFILE: Bitboard = 0xfcfcfcfcfcfcfcfc;
+pub const NOTHGFILE: Bitboard = 0x3f3f3f3f3f3f3f3f;
+
 pub fn print_bitboard(b: Bitboard) {
     for rank in (0..8).rev() {
         for file in 0..8 {
