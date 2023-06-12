@@ -18,6 +18,11 @@ impl KingAttacks {
         let mut bitboard: Bitboard = EMPTY;
         set_bit!(bitboard, square);
         
+        if bitboard & NOTHFILE > 0 {
+            attacks |= bitboard << 1;
+            attacks |= bitboard << 9;
+            attacks |= bitboard >> 7;
+        }
 
         attacks
     }
