@@ -1,6 +1,10 @@
 use super::super::bitboard::Bitboard;
 use super::super::square::Square;
+<<<<<<< HEAD
 use crate::engine::bitboard::{EMPTY, NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE};
+=======
+use crate::engine::bitboard::{NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, EMPTY};
+>>>>>>> 8282162a228ae50e5438aac43208690fd7d30e7e
 use crate::set_bit;
 pub struct KnightAttacks {
     knight_attacks: [Bitboard; 64], // [color][square]
