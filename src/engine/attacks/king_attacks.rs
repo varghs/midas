@@ -24,6 +24,15 @@ impl KingAttacks {
             attacks |= bitboard >> 7;
         }
 
+        if bitboard & NOTAFILE > 0 {
+            attacks |= bitboard << 7;
+            attacks |= bitboard >> 1;
+            attacks |= bitboard >> 9;
+        }
+
+        attacks |= bitboard << 8;
+        attacks |= bitboard >> 8;
+
         attacks
     }
 

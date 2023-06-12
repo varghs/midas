@@ -9,14 +9,8 @@ use midas::{
 };
 
 fn main() {
-    /*
     for i in 0..64 {
-        print_bitboard(KnightAttacks::mask_knight_attacks(
-            (i as u64).try_into().unwrap(),
-        ));
+        print_bitboard(KingAttacks::mask_king_attacks((i as usize).try_into().unwrap()));
         println!();
     }
-    */
-
-    print_bitboard(KingAttacks::mask_king_attacks(Square::a1));
 }
