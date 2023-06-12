@@ -1,5 +1,3 @@
-mod test;
-
 use midas::{
     engine::attacks::knight_attacks::KnightAttacks,
     engine::{

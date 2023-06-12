@@ -1,6 +1,6 @@
 use super::super::bitboard::Bitboard;
 use super::super::square::Square;
-use crate::engine::bitboard::{NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE};
+use crate::engine::bitboard::{NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, EMPTY};
 use crate::set_bit;
 pub struct KnightAttacks {
     knight_attacks: [Bitboard; 64], // [color][square]
@@ -13,8 +13,8 @@ impl KnightAttacks {
     }
 
     pub fn mask_knight_attacks(square: Square) -> Bitboard {
-        let mut attacks: Bitboard = 0;
-        let mut bitboard: Bitboard = 0;
+        let mut attacks: Bitboard = EMPTY;
+        let mut bitboard: Bitboard = EMPTY;
 
         set_bit!(bitboard, square);
 
