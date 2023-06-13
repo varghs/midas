@@ -42,6 +42,8 @@ pub const NOTHFILE: Bitboard = 0x7f7f7f7f7f7f7f7f;
 pub const NOTABFILE: Bitboard = 0xfcfcfcfcfcfcfcfc;
 pub const NOTHGFILE: Bitboard = 0x3f3f3f3f3f3f3f3f;
 
+pub const ONE: Bitboard = 1;
+
 pub fn print_bitboard(b: Bitboard) {
     for rank in (0..8).rev() {
         for file in 0..8 {
