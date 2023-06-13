@@ -1,11 +1,11 @@
-use self::pawn_attacks::PawnAttacks;
-use self::knight_attacks::KnightAttacks;
 use self::king_attacks::KingAttacks;
 use self::bishop_attacks::BishopAttacks;
+use self::knight_attacks::KnightAttacks;
+use self::pawn_attacks::PawnAttacks;
 
+pub mod king_attacks;
 pub mod knight_attacks;
 pub mod pawn_attacks;
-pub mod king_attacks;
 pub mod bishop_attacks;
 
 struct AttackTables {

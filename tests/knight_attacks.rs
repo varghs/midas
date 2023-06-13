@@ -13,31 +13,84 @@ fn a1() {
 }
 
 #[test]
-fn a2() {}
+fn a2() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::c3);
+    set_bit!(bitboard, Square::b4);
+    set_bit!(bitboard, Square::c1);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::a2), bitboard);
+}
+#[test]
+fn a3() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::b5);
+    set_bit!(bitboard, Square::c4);
+    set_bit!(bitboard, Square::c2);
+    set_bit!(bitboard, Square::b1);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::a3), bitboard);
+}
+#[test]
+fn a7() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::c8);
+    set_bit!(bitboard, Square::c6);
+    set_bit!(bitboard, Square::b5);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::a7), bitboard);
+}
+#[test]
+fn a8() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::c7);
+    set_bit!(bitboard, Square::b6);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::a8), bitboard);
+}
 
 #[test]
-fn a3() {}
+fn b1() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::a3);
+    set_bit!(bitboard, Square::c3);
+    set_bit!(bitboard, Square::d2);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::b1), bitboard);
+}
 
 #[test]
-fn a7() {}
-
+fn b2() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::a4);
+    set_bit!(bitboard, Square::c4);
+    set_bit!(bitboard, Square::d3);
+    set_bit!(bitboard, Square::d1);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::b2), bitboard);
+}
 #[test]
-fn a8() {}
-
+fn b3() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::a1);
+    set_bit!(bitboard, Square::c1);
+    set_bit!(bitboard, Square::a5);
+    set_bit!(bitboard, Square::c5);
+    set_bit!(bitboard, Square::d4);
+    set_bit!(bitboard, Square::d2);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::b3), bitboard);
+}
 #[test]
-fn b1() {}
-
+fn b7() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::c5);
+    set_bit!(bitboard, Square::d6);
+    set_bit!(bitboard, Square::d8);
+    set_bit!(bitboard, Square::a5);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::b7), bitboard);
+}
 #[test]
-fn b2() {}
-
-#[test]
-fn b3() {}
-
-#[test]
-fn b7() {}
-
-#[test]
-fn b8() {}
+fn b8() {
+    let mut bitboard: Bitboard = EMPTY;
+    set_bit!(bitboard, Square::a6);
+    set_bit!(bitboard, Square::c6);
+    set_bit!(bitboard, Square::d7);
+    assert_eq!(KnightAttacks::mask_knight_attacks(Square::b8), bitboard);
+}
 
 #[test]
 fn d3() {
