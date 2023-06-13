@@ -1,6 +1,6 @@
 use super::super::bitboard::Bitboard;
 use super::super::square::Square;
-use crate::engine::bitboard::{NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, EMPTY, ONE};
+use crate::engine::bitboard::{EMPTY, NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, ONE};
 use crate::set_bit;
 
 pub struct BishopAttacks {
@@ -14,11 +14,13 @@ impl BishopAttacks {
 
     pub fn mask_bishop_attacks(square: Square) -> Bitboard {
         let mut attacks: Bitboard = EMPTY;
-        let (target_rank, target_file) = ((square as i32) / 8, (square as i32) % 8 );
-        let (mut rank, mut file): (i32, i32) = (target_rank + 1, target_file + 1);
+        let (target_rank, target_file) = ((square as i32) / 8, (square as i32) % 8);
+        let mut rank = target_rank + 1;
+        let mut file = target_file + 1;
 
+        // while loop instead of for loop cuz... C is too complicated LOL
         while rank <= 6 && file <= 6 {
-            set_bit!(attacks, rank * 8 + file);
+            attacks |= ONE << (rank * 8 + file);
             rank += 1;
             file += 1;
         }
