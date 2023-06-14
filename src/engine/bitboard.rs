@@ -72,7 +72,7 @@ const INDEX_64_KIM: [u64; 64] = [
 pub trait LS1B {
     fn index_of_lsb(&self) -> Option<Square>;
     fn pop_lsb(&mut self) -> Option<Square>;
-    fn count_bits(bitboard: Bitboard) -> usize;
+    fn count_bits(&self) -> usize;
 }
 impl LS1B for Bitboard {
     /**
@@ -130,11 +130,12 @@ impl LS1B for Bitboard {
         return Some(index_of_lsb.try_into().unwrap());
     }
 
-    fn count_bits(mut bitboard: Bitboard) -> usize {
+    fn count_bits(&self) -> usize {
         let mut count = 0;
+        let mut tmp = *self;
 
-        while bitboard != 0 {
-            bitboard = bitboard & (bitboard - 1); // clear LSB
+        while tmp != 0 {
+            tmp = tmp & (tmp - 1); // clear LSB
             count += 1;
         }
 
