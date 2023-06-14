@@ -4,7 +4,7 @@ use std::fmt::Display;
 
 use crate::get_bit;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Piece {
     Pawn = 2,
     Rook,
