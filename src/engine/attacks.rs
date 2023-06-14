@@ -4,6 +4,7 @@ use self::bishop_attacks::BishopAttacks;
 use self::king_attacks::KingAttacks;
 use self::knight_attacks::KnightAttacks;
 use self::pawn_attacks::PawnAttacks;
+use self::rook_attacks::RookAttacks;
 
 use super::bitboard::{Bitboard, EMPTY, LS1B, ONE};
 use super::board::Piece;
@@ -45,6 +46,7 @@ struct AttackTables {
     knights: KnightAttacks,
     kings: KingAttacks,
     bishops: BishopAttacks,
+    rooks: RookAttacks,
 }
 
 impl AttackTables {
