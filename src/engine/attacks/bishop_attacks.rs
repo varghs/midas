@@ -21,7 +21,7 @@ impl BishopAttacks {
         let mut rank = target_rank + 1;
         let mut file = target_file + 1;
         while rank <= 7 && file <= 7 {
-            result |= ONE << (rank * 8 + file);
+            set_bit!(result, rank * 8 + file);
             // reached something that blocks us
             if (blockers & (ONE << (rank * 8 + file))) != 0 {
                 break;
@@ -33,7 +33,7 @@ impl BishopAttacks {
         rank = target_rank + 1;
         file = target_file - 1;
         while rank <= 7 && file >= 0 {
-            result |= ONE << (rank * 8 + file);
+            set_bit!(result, rank * 8 + file);
             if (blockers & (ONE << (rank * 8 + file))) != 0 {
                 break;
             }
@@ -44,7 +44,7 @@ impl BishopAttacks {
         rank = target_rank - 1;
         file = target_file + 1;
         while rank >= 0 && file <= 7 {
-            result |= ONE << (rank * 8 + file);
+            set_bit!(result, rank * 8 + file);
             if (blockers & (ONE << (rank * 8 + file))) != 0 {
                 break;
             }
@@ -55,7 +55,7 @@ impl BishopAttacks {
         rank = target_rank - 1;
         file = target_file - 1;
         while rank >= 0 && file >= 0 {
-            result |= ONE << (rank * 8 + file);
+            set_bit!(result, rank * 8 + file);
             if (blockers & (ONE << (rank * 8 + file))) != 0 {
                 break;
             }
