@@ -109,15 +109,15 @@ pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece
     let mut attacks = [EMPTY; 4096];
     let mut used_attacks = [EMPTY; 4096];
     let attack_mask: Bitboard = match piece_type {
-        Piece::Bishop => BishopAttacks::get_bishop_attack(square, EMPTY),
+        Piece::Bishop => BishopAttacks::mask_bishop_attack(square),
         // Piece::Rook => {
         //     RookAttacks::mask_rook_attacks(square)
         // }
         _ => panic!("bro its gotta be rook or bishop LOLS"),
     };
-    print_bitboard(attack_mask);
+    // print_bitboard(attack_mask);
     let occupancy_indicies = 1 << relevant_bits;
-    println!("occupancy_indicies is {}", occupancy_indicies);
+    // println!("occupancy_indicies is {}", occupancy_indicies);
 
     for index in 0..occupancy_indicies {
         // println!("index in occupancy indicies is {}", index);
@@ -150,6 +150,8 @@ pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece
             continue;
         }
 
+        used_attacks = [EMPTY; 4096];
+
         // println!("found magic_number: {:?}", magic_number);
 
         let mut index = 0;
@@ -169,17 +171,17 @@ pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece
             // );
             if used_attacks[magic_index] == EMPTY {
                 used_attacks[magic_index] = attacks[index];
-                println!(
-                    "set used_attacks[{}] to attacks[{}] {}",
-                    magic_index, index, attacks[index]
-                );
+                // println!(
+                //     "set used_attacks[{}] to attacks[{}] {}",
+                //     magic_index, index, attacks[index]
+                // );
             } else if used_attacks[magic_index] != attacks[index] {
                 // magic index doesnt work
                 // COLLISION!!!
-                println!(
-                    "have used_attacks[{}] {} but attacks[{}] {}",
-                    magic_index, used_attacks[magic_index], index, attacks[index]
-                );
+                // println!(
+                //     "have used_attacks[{}] {} but attacks[{}] {}",
+                //     magic_index, used_attacks[magic_index], index, attacks[index]
+                // );
                 fail = true;
             }
 

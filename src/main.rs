@@ -1,8 +1,8 @@
 use midas::{
     engine::attacks::bishop_attacks::BishopAttacks,
     engine::{
-        attacks::{init_magic_testing, set_occupancy, rook_attacks::RookAttacks},
-        bitboard::{print_bitboard, Bitboard, LS1B, ONE, EMPTY},
+        attacks::{init_magic_testing, rook_attacks::RookAttacks, set_occupancy},
+        bitboard::{print_bitboard, Bitboard, EMPTY, LS1B, ONE},
         board::{Board, Color},
         square::Square,
     },
@@ -23,7 +23,8 @@ fn main() {
     set_bit!(blockers, Square::d2);
     set_bit!(blockers, Square::b4);
 
-
     let attack_mask = RookAttacks::get_rook_attack(Square::d4, blockers);
     print_bitboard(attack_mask);
+
+    init_magic_testing();
 }
