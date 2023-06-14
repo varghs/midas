@@ -1,7 +1,8 @@
 use midas::{
     engine::attacks::bishop_attacks::BishopAttacks,
     engine::{
-        bitboard::{print_bitboard, Bitboard},
+        attacks::{init_magic_testing, set_occupancy},
+        bitboard::{print_bitboard, Bitboard, LS1B},
         board::{Board, Color},
         square::Square,
     },
@@ -16,5 +17,12 @@ fn main() {
     }
     */
 
-    print_bitboard(BishopAttacks::mask_bishop_attacks(Square::d4));
+    // print_bitboard(BishopAttacks::mask_bishop_attacks(Square::d4));
+
+    let attack_mask = BishopAttacks::mask_bishop_attacks(Square::d4);
+
+    // the 4095 is some fancy math.. but basically it ensures
+    // we go through all the possible occupancies
+
+    init_magic_testing();
 }
