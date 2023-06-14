@@ -1,3 +1,5 @@
+use crate::engine::bitboard::print_bitboard;
+
 use self::bishop_attacks::BishopAttacks;
 use self::king_attacks::KingAttacks;
 use self::knight_attacks::KnightAttacks;
@@ -110,9 +112,12 @@ pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece
         // }
         _ => panic!("bro its gotta be rook or bishop LOLS"),
     };
+    print_bitboard(attack_mask);
     let occupancy_indicies = 1 << relevant_bits;
+    println!("occupancy_indicies is {}", occupancy_indicies);
 
     for index in 0..occupancy_indicies {
+        // println!("index in occupancy indicies is {}", index);
         occupancies[index] = set_occupancy(index, relevant_bits, attack_mask);
 
         // // initialize the attacks
@@ -126,39 +131,52 @@ pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece
         attacks[index] = BishopAttacks::get_bishop_attack(square, occupancies[index]);
     }
 
+    // for i in 0..occupancy_indicies {
+    //     println!("i: {} occupancies[]: {}", i, occupancies[i]);
+    // }
+
     // test magic numbers
-    for i in 0..1000000 {
+    for _ in 0..1000000 {
         // lol
         let magic_number: u64 = generate_magic_number();
         // println!("testing this {:x?}", magic_number);
 
         // skip too small of magic numbers
-        if Bitboard::count_bits(magic_number.wrapping_mul(attack_mask) & 0xFF00000000000000) < 6 {
+        if Bitboard::count_bits((magic_number.wrapping_mul(attack_mask)) & 0xFF00000000000000) < 6 {
             // println!("number too small lol");
             continue;
         }
 
-        println!("found magic_number: {:?}", magic_number);
+        // println!("found magic_number: {:?}", magic_number);
 
         let mut index = 0;
         let mut fail = false;
 
         while fail == false && index < occupancy_indicies {
             // init magic index
+            // println!("occupancies[index] is {}", occupancy_indicies);
             let magic_index =
                 ((occupancies[index].wrapping_mul(magic_number)) >> (64 - relevant_bits)) as usize;
 
-            println!("magic_index: {:064b}", magic_index);
+            // println!("index: {}; magic_index: {:064b}", index, magic_index);
 
+            // println!(
+            //     "used_attacks[magic_index] is {:?}",
+            //     used_attacks[magic_index]
+            // );
             if used_attacks[magic_index] == EMPTY {
                 used_attacks[magic_index] = attacks[index];
+                println!(
+                    "set used_attacks[{}] to attacks[{}] {}",
+                    magic_index, index, attacks[index]
+                );
             } else if used_attacks[magic_index] != attacks[index] {
                 // magic index doesnt work
                 // COLLISION!!!
-                // println!(
-                //     "we failed...found this \n{:?}.. but have this \n{:?}\n\n",
-                //     used_attacks[magic_index], attacks[index]
-                // );
+                println!(
+                    "have used_attacks[{}] {} but attacks[{}] {}",
+                    magic_index, used_attacks[magic_index], index, attacks[index]
+                );
                 fail = true;
             }
 
