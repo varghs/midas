@@ -13,6 +13,46 @@ impl BishopAttacks {
         Self { bishop_attacks }
     }
 
+    pub fn mask_bishop_attack(square: Square) -> Bitboard {
+        let mut result = EMPTY;
+        let target_rank = (square as i32) / 8;
+        let target_file = (square as i32) % 8;
+
+        let mut rank = target_rank + 1;
+        let mut file = target_file + 1;
+        while rank <= 6 && file <= 6 {
+            set_bit!(result, rank * 8 + file);
+            rank += 1;
+            file += 1;
+        }
+
+        rank = target_rank + 1;
+        file = target_file - 1;
+        while rank <= 6 && file >= 1 {
+            set_bit!(result, rank * 8 + file);
+            rank += 1;
+            file -= 1;
+        }
+
+        rank = target_rank - 1;
+        file = target_file + 1;
+        while rank >= 1 && file <= 6 {
+            set_bit!(result, rank * 8 + file);
+            rank -= 1;
+            file += 1;
+        }
+
+        rank = target_rank - 1;
+        file = target_file - 1;
+        while rank >= 1 && file >= 1 {
+            set_bit!(result, rank * 8 + file);
+            rank -= 1;
+            file -= 1;
+        }
+
+        result
+    }
+
     pub fn get_bishop_attack(square: Square, blockers: Bitboard) -> Bitboard {
         let mut result = EMPTY;
         let target_rank = (square as i32) / 8;

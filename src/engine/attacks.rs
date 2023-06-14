@@ -14,6 +14,7 @@ pub mod bishop_attacks;
 pub mod king_attacks;
 pub mod knight_attacks;
 pub mod pawn_attacks;
+pub mod rook_attacks;
 
 // bishop relevant occupancy bit count for every square on board
 #[rustfmt::skip]
@@ -69,7 +70,7 @@ pub fn set_occupancy(
 ) -> Bitboard {
     let mut occupancy: Bitboard = EMPTY;
 
-    let bits_in_mask = Bitboard::count_bits(attack_mask);
+    let bits_in_mask = attack_mask.count_bits();
     // println!(
     //     "bits counted: {:4?} bits recieved: {:4?}",
     //     bits_in_mask, bits_mask_recieved
@@ -108,7 +109,7 @@ pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece
     let mut attacks = [EMPTY; 4096];
     let mut used_attacks = [EMPTY; 4096];
     let attack_mask: Bitboard = match piece_type {
-        Piece::Bishop => BishopAttacks::mask_bishop_attacks(square),
+        Piece::Bishop => BishopAttacks::get_bishop_attack(square, EMPTY),
         // Piece::Rook => {
         //     RookAttacks::mask_rook_attacks(square)
         // }
@@ -144,7 +145,7 @@ pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece
         // println!("testing this {:x?}", magic_number);
 
         // skip too small of magic numbers
-        if Bitboard::count_bits((magic_number.wrapping_mul(attack_mask)) & 0xFF00000000000000) < 6 {
+        if (magic_number.wrapping_mul(attack_mask) & 0xFF00000000000000).count_bits() < 6 {
             // println!("number too small lol");
             continue;
         }
