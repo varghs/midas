@@ -1,46 +1,13 @@
-use crate::engine::bitboard::print_bitboard;
-
-use self::bishop_attacks::BishopAttacks;
+use self::slider_attacks::bishop_attacks::BishopAttacks;
 use self::king_attacks::KingAttacks;
 use self::knight_attacks::KnightAttacks;
 use self::pawn_attacks::PawnAttacks;
-use self::rook_attacks::RookAttacks;
+use self::slider_attacks::rook_attacks::RookAttacks;
 
-use super::bitboard::{Bitboard, EMPTY, LS1B, ONE};
-use super::board::Piece;
-use super::square::Square;
-
-pub mod bishop_attacks;
+pub mod slider_attacks;
 pub mod king_attacks;
 pub mod knight_attacks;
 pub mod pawn_attacks;
-pub mod rook_attacks;
-
-// bishop relevant occupancy bit count for every square on board
-#[rustfmt::skip]
-const bishop_relevant_bits: [usize; 64] = [
-    6, 5, 5, 5, 5, 5, 5, 6,
-    5, 5, 5, 5, 5, 5, 5, 5,
-    5, 5, 7, 7, 7, 7, 5, 5,
-    5, 5, 7, 9, 9, 7, 5, 5,
-    5, 5, 7, 9, 9, 7, 5, 5,
-    5, 5, 7, 7, 7, 7, 5, 5,
-    5, 5, 5, 5, 5, 5, 5, 5,
-    6, 5, 5, 5, 5, 5, 5, 6,
-];
-
-// rook relevant occupancy bit count for every square on board
-#[rustfmt::skip]
-const rook_relevant_bits: [usize; 64] = [
-    12, 11, 11, 11, 11, 11, 11, 12,
-    11, 10, 10, 10, 10, 10, 10, 11, 
-    11, 10, 10, 10, 10, 10, 10, 11,
-    11, 10, 10, 10, 10, 10, 10, 11, 
-    11, 10, 10, 10, 10, 10, 10, 11, 
-    11, 10, 10, 10, 10, 10, 10, 11,
-    11, 10, 10, 10, 10, 10, 10, 11, 
-    12, 11, 11, 11, 11, 11, 11, 12,
-];
 
 struct AttackTables {
     pawns: PawnAttacks,
@@ -60,149 +27,5 @@ impl AttackTables {
         self.pawns.populate();
         self.knights.populate();
         self.kings.populate();
-    }
-}
-
-pub fn set_occupancy(
-    index: usize,
-    bits_mask_recieved: usize,
-    mut attack_mask: Bitboard,
-) -> Bitboard {
-    let mut occupancy: Bitboard = EMPTY;
-
-    let bits_in_mask = attack_mask.count_bits();
-    // println!(
-    //     "bits counted: {:4?} bits recieved: {:4?}",
-    //     bits_in_mask, bits_mask_recieved
-    // );
-    for i in 0..bits_mask_recieved {
-        // get LS1B index of attack_mask
-        if let Some(square_index) = attack_mask.pop_lsb() {
-            // make sure occupancy is on the board
-            if (index & (1 << i)) != 0 {
-                // populate occupancy map
-                occupancy |= ONE << square_index;
-            }
-        }
-    }
-    // return
-    occupancy
-}
-
-use rand::Rng;
-pub fn get_random_bitboard_nums() -> u64 {
-    let mut rng = rand::thread_rng();
-    let n1 = (rng.gen::<u32>() & 0xFFFF) as u64;
-    let n2 = (rng.gen::<u32>() & 0xFFFF) as u64;
-    let n3 = (rng.gen::<u32>() & 0xFFFF) as u64;
-    let n4 = (rng.gen::<u32>() & 0xFFFF) as u64;
-
-    return n1 | (n2 << 16) | (n3 << 32) | (n4 << 48);
-}
-
-pub fn generate_magic_number() -> u64 {
-    return get_random_bitboard_nums() & get_random_bitboard_nums() & get_random_bitboard_nums();
-}
-
-pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece) -> Bitboard {
-    let mut occupancies = [EMPTY; 4096];
-    let mut attacks = [EMPTY; 4096];
-    let mut used_attacks = [EMPTY; 4096];
-    let attack_mask: Bitboard = match piece_type {
-        Piece::Bishop => BishopAttacks::mask_bishop_attack(square),
-        // Piece::Rook => {
-        //     RookAttacks::mask_rook_attacks(square)
-        // }
-        _ => panic!("bro its gotta be rook or bishop LOLS"),
-    };
-    // print_bitboard(attack_mask);
-    let occupancy_indicies = 1 << relevant_bits;
-    // println!("occupancy_indicies is {}", occupancy_indicies);
-
-    for index in 0..occupancy_indicies {
-        // println!("index in occupancy indicies is {}", index);
-        occupancies[index] = set_occupancy(index, relevant_bits, attack_mask);
-
-        // // initialize the attacks
-        // attacks[index] = if piece_type == Piece::Bishop {
-        //     BishopAttacks::get_bishop_attack(square, occupancies[index])
-        // } else {
-        //     // eventually
-        //     // RookAttacks::get_rook_attack(square, occupancies[index])
-        //     0
-        // }
-        attacks[index] = BishopAttacks::get_bishop_attack(square, occupancies[index]);
-    }
-
-    // for i in 0..occupancy_indicies {
-    //     println!("i: {} occupancies[]: {}", i, occupancies[i]);
-    // }
-
-    // test magic numbers
-    for _ in 0..1000000 {
-        // lol
-        let magic_number: u64 = generate_magic_number();
-        // println!("testing this {:x?}", magic_number);
-
-        // skip too small of magic numbers
-        if (magic_number.wrapping_mul(attack_mask) & 0xFF00000000000000).count_bits() < 6 {
-            // println!("number too small lol");
-            continue;
-        }
-
-        used_attacks = [EMPTY; 4096];
-
-        // println!("found magic_number: {:?}", magic_number);
-
-        let mut index = 0;
-        let mut fail = false;
-
-        while fail == false && index < occupancy_indicies {
-            // init magic index
-            // println!("occupancies[index] is {}", occupancy_indicies);
-            let magic_index =
-                ((occupancies[index].wrapping_mul(magic_number)) >> (64 - relevant_bits)) as usize;
-
-            // println!("index: {}; magic_index: {:064b}", index, magic_index);
-
-            // println!(
-            //     "used_attacks[magic_index] is {:?}",
-            //     used_attacks[magic_index]
-            // );
-            if used_attacks[magic_index] == EMPTY {
-                used_attacks[magic_index] = attacks[index];
-                // println!(
-                //     "set used_attacks[{}] to attacks[{}] {}",
-                //     magic_index, index, attacks[index]
-                // );
-            } else if used_attacks[magic_index] != attacks[index] {
-                // magic index doesnt work
-                // COLLISION!!!
-                // println!(
-                //     "have used_attacks[{}] {} but attacks[{}] {}",
-                //     magic_index, used_attacks[magic_index], index, attacks[index]
-                // );
-                fail = true;
-            }
-
-            index += 1;
-        }
-
-        if !fail {
-            return magic_number;
-        }
-    }
-
-    println!("lol magic number somehow failed.. uh oh");
-    return EMPTY;
-}
-
-pub fn init_magic_testing() {
-    for square_num in 0..64_usize {
-        // init bishop magics
-        let square: Square = square_num.try_into().unwrap();
-        let magic = find_magic_number(square, bishop_relevant_bits[square_num], Piece::Bishop);
-
-        println!("{:x?}", magic);
     }
 }
