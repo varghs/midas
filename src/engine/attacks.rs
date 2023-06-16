@@ -124,14 +124,12 @@ pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece
         occupancies[index] = set_occupancy(index, relevant_bits, attack_mask);
 
         // // initialize the attacks
-        // attacks[index] = if piece_type == Piece::Bishop {
-        //     BishopAttacks::get_bishop_attack(square, occupancies[index])
-        // } else {
-        //     // eventually
-        //     // RookAttacks::get_rook_attack(square, occupancies[index])
-        //     0
-        // }
-        attacks[index] = BishopAttacks::get_bishop_attack(square, occupancies[index]);
+        attacks[index] = if piece_type == Piece::Bishop {
+            BishopAttacks::get_bishop_attack(square, occupancies[index])
+        } else {
+            // eventually
+            RookAttacks::get_rook_attack(square, occupancies[index])
+        }
     }
 
     // for i in 0..occupancy_indicies {
@@ -203,6 +201,6 @@ pub fn init_magic_testing() {
         let square: Square = square_num.try_into().unwrap();
         let magic = find_magic_number(square, bishop_relevant_bits[square_num], Piece::Bishop);
 
-        println!("{:x?}", magic);
+        println!("{:016x?}", magic);
     }
 }
