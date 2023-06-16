@@ -3,6 +3,8 @@ use crate::engine::square::Square;
 use crate::engine::bitboard::{NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, EMPTY, ONE, print_bitboard};
 use crate::set_bit;
 
+use super::ROOK_MAGICS;
+
 // rook relevant occupancy bit count for every square on board
 #[rustfmt::skip]
 pub const rook_relevant_bits: [usize; 64] = [
@@ -17,13 +19,15 @@ pub const rook_relevant_bits: [usize; 64] = [
 ];
 
 pub struct RookAttacks {
-    rook_masks: [Bitboard; 64], // [color][square]
+    pub rook_masks: [Bitboard; 64], // [square]
+    pub rook_attacks: [[Bitboard; 4096]; 64], // [square][occupancy]
 }
 
 impl RookAttacks {
     pub fn new() -> Self {
         let rook_masks = [0; 64];
-        Self { rook_masks }
+        let rook_attacks = [[0; 4096]; 64];
+        Self { rook_masks, rook_attacks }
     }
 
     pub fn mask_rook_attack(square: Square) -> Bitboard {
@@ -56,7 +60,7 @@ impl RookAttacks {
         attacks
     }
 
-    pub fn get_rook_attack(square: Square, blockers: Bitboard) -> Bitboard {
+    pub fn rook_attacks_otf(square: Square, blockers: Bitboard) -> Bitboard {
         let mut attacks: Bitboard = EMPTY;
         let (target_rank, target_file) = ((square as i32) / 8, (square as i32) % 8);
         let (mut rank, mut file): (i32, i32) = (target_rank + 1, target_file + 1);
@@ -98,7 +102,14 @@ impl RookAttacks {
         attacks
     }
 
-    pub fn populate() {
-        todo!()
+    pub fn get_rook_attack(&self, square: Square, occupancy: Bitboard) -> Bitboard {
+        let square_num: usize = square as usize;
+        let mut occ = occupancy;
+
+        occ &= self.rook_masks[square_num];
+        occ = occ.wrapping_mul(ROOK_MAGICS[square_num]);
+        occ >>= 64 - rook_relevant_bits[square_num];
+
+        self.rook_attacks[square_num][occ as usize]
     }
 }

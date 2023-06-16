@@ -50,7 +50,7 @@ impl Move {
     }
 }
 
-trait Moves {
+pub trait Moves {
     fn quiet_moves(&self, b: &mut Board);
     fn double_pawn_push(&self, b: &mut Board);
     fn king_castle(&self, b: &mut Board);
