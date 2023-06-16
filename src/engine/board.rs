@@ -3,7 +3,7 @@ use std::convert::TryFrom;
 use std::fmt::Display;
 use crate::engine::square::Square;
 
-use crate::get_bit;
+use crate::{get_bit, set_bit};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Piece {
@@ -52,6 +52,18 @@ pub enum Color {
     Black,
 }
 
+impl Display for Color {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut output = String::new();
+
+        match self {
+            Color::White => output += "White",
+            Color::Black => output += "Black",
+        }
+        write!(f, "{}", output)
+    }
+}
+
 #[derive(Clone, Copy)]
 pub enum Castle {
     WhiteKing = 1,
@@ -64,7 +76,7 @@ pub struct CastleRep(u8);
 
 impl CastleRep {
     pub fn new() -> Self {
-        Self(0)
+        Self(0xF)
     }
     pub fn can_castle(&self, castle: Castle) -> bool {
         self.0 & (castle as u8) > 0
@@ -80,6 +92,35 @@ impl CastleRep {
 
     pub fn tog_castle(&mut self, castle: Castle) {
         self.0 ^= castle as u8;
+    }
+}
+
+impl Display for CastleRep {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut output = String::new();
+
+        if self.can_castle(Castle::WhiteKing) {
+            output += "K";
+        } else {
+            output += "-";
+        }
+        if self.can_castle(Castle::WhiteQueen) {
+            output += "Q";
+        } else {
+            output += "-";
+        }
+        if self.can_castle(Castle::BlackKing) {
+            output += "k";
+        } else {
+            output += "-";
+        }
+        if self.can_castle(Castle::BlackQueen) {
+            output += "q";
+        } else {
+            output += "-";
+        }
+
+        write!(f, "{}", output)
     }
 }
 
@@ -102,7 +143,7 @@ impl Board {
         let white: Bitboard = 0x000000000000FFFF;
 
         let side = Color::White;
-        let en_passant_sq: Option<Square> = None;
+        let en_passant_sq: Option<Square> = Some(Square::e3);
 
         let boards: [Bitboard; 8] = [white, black, pawns, rooks, knights, bishops, queens, kings];
         Board {
@@ -113,15 +154,20 @@ impl Board {
         }
     }
 
-    fn get_piece(&self, p: Piece) -> Bitboard {
+    pub fn set_piece_color(&mut self, p: Piece, c: Color, s: Square) {
+        set_bit!(self.boards[p as usize], s);
+        set_bit!(self.boards[c as usize], s);
+    }
+
+    pub fn get_piece(&self, p: Piece) -> Bitboard {
         self.boards[p as usize]
     }
 
-    fn get_color(&self, c: Color) -> Bitboard {
+    pub fn get_color(&self, c: Color) -> Bitboard {
         self.boards[c as usize]
     }
 
-    fn get_piece_of_color(&self, p: Piece, c: Color) -> Bitboard {
+    pub fn get_piece_of_color(&self, p: Piece, c: Color) -> Bitboard {
         self.get_piece(p) & self.get_color(c)
     }
 }
@@ -145,7 +191,7 @@ impl Display for Board {
                         true => {
                             filled = true;
                             let p: Piece = board_idx.try_into().unwrap();
-                            match self.boards[Color::White as usize] & (1 << square) {
+                            match self.get_color(Color::White) & (1 << square) {
                                 0 => {
                                     output += format!("{} ", p).to_lowercase().as_str();
                                 },
@@ -165,7 +211,14 @@ impl Display for Board {
             output += "\n";
         }
         // print files
-        output += "\n    a b c d e f g h ";
+        output += "\n    a b c d e f g h \n";
+        output += format!("Side to move: {} \n", self.side).as_str();
+        output += format!("En passant square: {}\n", match self.en_passant_sq {
+            Some(i) => i.to_string(),
+            None => String::from("None"),
+        }).as_str();
+
+        output += format!("Castling: {}", self.castle).as_str();
 
         write!(f, "{}", output)
     }
