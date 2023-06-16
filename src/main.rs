@@ -40,6 +40,7 @@ fn main() {
             print_bitboard(tables.sliders.bishops.get_bishop_attack(Square::d4, occupancy));
             println!();
             print_bitboard(tables.sliders.rooks.get_rook_attack(Square::e5, occupancy));
-
+            let b = Board::new();
+            println!("{}", b);
         }).unwrap().join().unwrap();
 }
