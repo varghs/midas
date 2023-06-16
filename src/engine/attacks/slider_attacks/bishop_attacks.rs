@@ -1,16 +1,30 @@
-use super::super::bitboard::Bitboard;
-use super::super::square::Square;
+use crate::engine::bitboard::Bitboard;
+use crate::engine::square::Square;
 use crate::engine::bitboard::{EMPTY, NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, ONE};
 use crate::set_bit;
 
+// bishop relevant occupancy bit count for every square on board
+#[rustfmt::skip]
+pub const bishop_relevant_bits: [usize; 64] = [
+    6, 5, 5, 5, 5, 5, 5, 6,
+    5, 5, 5, 5, 5, 5, 5, 5,
+    5, 5, 7, 7, 7, 7, 5, 5,
+    5, 5, 7, 9, 9, 7, 5, 5,
+    5, 5, 7, 9, 9, 7, 5, 5,
+    5, 5, 7, 7, 7, 7, 5, 5,
+    5, 5, 5, 5, 5, 5, 5, 5,
+    6, 5, 5, 5, 5, 5, 5, 6,
+];
+
 pub struct BishopAttacks {
-    bishop_attacks: [Bitboard; 64], // [color][square]
+    bishop_masks: [Bitboard; 64], // [square]
+    bishop_attacks: [Bitboard; ]
 }
 
 impl BishopAttacks {
     pub fn new() -> Self {
-        let bishop_attacks = [0; 64];
-        Self { bishop_attacks }
+        let bishop_masks = [0; 64];
+        Self { bishop_masks }
     }
 
     pub fn mask_bishop_attack(square: Square) -> Bitboard {
