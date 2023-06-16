@@ -69,6 +69,7 @@ pub trait Moves {
 
 const ONE: Bitboard = 1;
 
+/*
 impl Moves for Move {
     fn quiet_moves(&self, b: &mut Board) {
         let from_bb = ONE << (self.get_from() as u64);
@@ -196,3 +197,4 @@ impl Moves for Move {
         b.boards[self.get_captured_color().unwrap() as usize] ^= to_bb;
     }
 }
+*/

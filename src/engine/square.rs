@@ -1,5 +1,5 @@
 use super::bitboard::Bitboard;
-use std::ops::Shl;
+use std::{ops::Shl, fmt::Display};
 
 #[allow(non_camel_case_types)]
 #[rustfmt::skip]
@@ -19,6 +19,152 @@ impl Shl<Square> for Bitboard {
     type Output = Bitboard;
     fn shl(self, rhs: Square) -> Self::Output {
         self << rhs as u64
+    }
+}
+
+impl Display for Square {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut output = String::new();
+        match self {
+            Square::a1 => { output += "a1"; },
+            Square::b1 => { output += "b1"; },
+            Square::c1 => { output += "c1"; },
+            Square::d1 => { output += "d1"; },
+            Square::e1 => { output += "e1"; },
+            Square::f1 => { output += "f1"; },
+            Square::g1 => { output += "g1"; },
+            Square::h1 => { output += "h1"; },
+            Square::a2 => { output += "a2"; },
+            Square::b2 => { output += "b2"; },
+            Square::c2 => { output += "c2"; },
+            Square::d2 => { output += "d2"; },
+            Square::e2 => { output += "e2"; },
+            Square::f2 => { output += "f2"; },
+            Square::g2 => { output += "g2"; },
+            Square::h2 => { output += "h2"; },
+            Square::a3 => { output += "a3"; },
+            Square::b3 => { output += "b3"; },
+            Square::c3 => { output += "c3"; },
+            Square::d3 => { output += "d3"; },
+            Square::e3 => { output += "e3"; },
+            Square::f3 => { output += "f3"; },
+            Square::g3 => { output += "g3"; },
+            Square::h3 => { output += "h3"; },
+            Square::a4 => { output += "a4"; },
+            Square::b4 => { output += "b4"; },
+            Square::c4 => { output += "c4"; },
+            Square::d4 => { output += "d4"; },
+            Square::e4 => { output += "e4"; },
+            Square::f4 => { output += "f4"; },
+            Square::g4 => { output += "g4"; },
+            Square::h4 => { output += "h4"; },
+            Square::a5 => { output += "a5"; },
+            Square::b5 => { output += "b5"; },
+            Square::c5 => { output += "c5"; },
+            Square::d5 => { output += "d5"; },
+            Square::e5 => { output += "e5"; },
+            Square::f5 => { output += "f5"; },
+            Square::g5 => { output += "g5"; },
+            Square::h5 => { output += "h5"; },
+            Square::a6 => { output += "a6"; },
+            Square::b6 => { output += "b6"; },
+            Square::c6 => { output += "c6"; },
+            Square::d6 => { output += "d6"; },
+            Square::e6 => { output += "e6"; },
+            Square::f6 => { output += "f6"; },
+            Square::g6 => { output += "g6"; },
+            Square::h6 => { output += "h6"; },
+            Square::a7 => { output += "a7"; },
+            Square::b7 => { output += "b7"; },
+            Square::c7 => { output += "c7"; },
+            Square::d7 => { output += "d7"; },
+            Square::e7 => { output += "e7"; },
+            Square::f7 => { output += "f7"; },
+            Square::g7 => { output += "g7"; },
+            Square::h7 => { output += "h7"; },
+            Square::a8 => { output += "a8"; },
+            Square::b8 => { output += "b8"; },
+            Square::c8 => { output += "c8"; },
+            Square::d8 => { output += "d8"; },
+            Square::e8 => { output += "e8"; },
+            Square::f8 => { output += "f8"; },
+            Square::g8 => { output += "g8"; },
+            Square::h8 => { output += "h8"; },
+        }
+        write!(f, "{}", output)
+    }
+}
+
+impl TryFrom<&str> for Square {
+    type Error = String;
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "a1" => Ok(Square::a1),
+            "b1" => Ok(Square::b1),
+            "c1" => Ok(Square::c1),
+            "d1" => Ok(Square::d1),
+            "e1" => Ok(Square::e1),
+            "f1" => Ok(Square::f1),
+            "g1" => Ok(Square::g1),
+            "h1" => Ok(Square::h1),
+            "a2" => Ok(Square::a2),
+            "b2" => Ok(Square::b2),
+            "c2" => Ok(Square::c2),
+            "d2" => Ok(Square::d2),
+            "e2" => Ok(Square::e2),
+            "f2" => Ok(Square::f2),
+            "g2" => Ok(Square::g2),
+            "h2" => Ok(Square::h2),
+            "a3" => Ok(Square::a3),
+            "b3" => Ok(Square::b3),
+            "c3" => Ok(Square::c3),
+            "d3" => Ok(Square::d3),
+            "e3" => Ok(Square::e3),
+            "f3" => Ok(Square::f3),
+            "g3" => Ok(Square::g3),
+            "h3" => Ok(Square::h3),
+            "a4" => Ok(Square::a4),
+            "b4" => Ok(Square::b4),
+            "c4" => Ok(Square::c4),
+            "d4" => Ok(Square::d4),
+            "e4" => Ok(Square::e4),
+            "f4" => Ok(Square::f4),
+            "g4" => Ok(Square::g4),
+            "h4" => Ok(Square::h4),
+            "a5" => Ok(Square::a5),
+            "b5" => Ok(Square::b5),
+            "c5" => Ok(Square::c5),
+            "d5" => Ok(Square::d5),
+            "e5" => Ok(Square::e5),
+            "f5" => Ok(Square::f5),
+            "g5" => Ok(Square::g5),
+            "h5" => Ok(Square::h5),
+            "a6" => Ok(Square::a6),
+            "b6" => Ok(Square::b6),
+            "c6" => Ok(Square::c6),
+            "d6" => Ok(Square::d6),
+            "e6" => Ok(Square::e6),
+            "f6" => Ok(Square::f6),
+            "g6" => Ok(Square::g6),
+            "h6" => Ok(Square::h6),
+            "a7" => Ok(Square::a7),
+            "b7" => Ok(Square::b7),
+            "c7" => Ok(Square::c7),
+            "d7" => Ok(Square::d7),
+            "e7" => Ok(Square::e7),
+            "f7" => Ok(Square::f7),
+            "g7" => Ok(Square::g7),
+            "h7" => Ok(Square::h7),
+            "a8" => Ok(Square::a8),
+            "b8" => Ok(Square::b8),
+            "c8" => Ok(Square::c8),
+            "d8" => Ok(Square::d8),
+            "e8" => Ok(Square::e8),
+            "f8" => Ok(Square::f8),
+            "g8" => Ok(Square::g8),
+            "h8" => Ok(Square::h8),
+            _ => Err("Invalid square conversion.".to_string())
+        }
     }
 }
 

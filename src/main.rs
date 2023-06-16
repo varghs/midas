@@ -5,7 +5,8 @@ use midas::{
         attacks::slider_attacks::SliderAttacks,
         attacks::AttackTables,
         bitboard::{print_bitboard, Bitboard, EMPTY, LS1B, ONE},
-        board::{Board, Color},
+        board::{Board, Castle, Color, Piece},
+        fen::*,
         square::Square,
     },
     set_bit,
@@ -26,25 +27,12 @@ fn main() {
             let mut tables = AttackTables::new();
             tables.populate();
 
-            let mut occupancy = EMPTY;
-            set_bit!(occupancy, Square::c5);
-            set_bit!(occupancy, Square::f2);
-            set_bit!(occupancy, Square::g7);
-            set_bit!(occupancy, Square::b2);
-            set_bit!(occupancy, Square::g5);
-            set_bit!(occupancy, Square::e2);
-            set_bit!(occupancy, Square::e7);
+            let mut b = Board::new();
 
-            print_bitboard(occupancy);
-            println!();
-            print_bitboard(
-                tables
-                    .sliders
-                    .bishops
-                    .get_bishop_attack(Square::d4, occupancy),
-            );
-            println!();
-            print_bitboard(tables.sliders.rooks.get_rook_attack(Square::e5, occupancy));
+            b.parse_fen(FEN(
+                "r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 b - - 0 9 ",
+            ));
+            println!("{}", b);
         })
         .unwrap()
         .join()
