@@ -3,6 +3,8 @@ use crate::engine::square::Square;
 use crate::engine::bitboard::{EMPTY, NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, ONE};
 use crate::set_bit;
 
+use super::BISHOP_MAGICS;
+
 // bishop relevant occupancy bit count for every square on board
 #[rustfmt::skip]
 pub const bishop_relevant_bits: [usize; 64] = [
@@ -17,14 +19,15 @@ pub const bishop_relevant_bits: [usize; 64] = [
 ];
 
 pub struct BishopAttacks {
-    bishop_masks: [Bitboard; 64], // [square]
-    bishop_attacks: [Bitboard; ]
+    pub bishop_masks: [Bitboard; 64], // [square]
+    pub bishop_attacks: [[Bitboard; 512]; 64], // [square][occupancy]
 }
 
 impl BishopAttacks {
     pub fn new() -> Self {
         let bishop_masks = [0; 64];
-        Self { bishop_masks }
+        let bishop_attacks = [[0; 512]; 64];
+        Self { bishop_masks, bishop_attacks }
     }
 
     pub fn mask_bishop_attack(square: Square) -> Bitboard {
@@ -67,7 +70,7 @@ impl BishopAttacks {
         result
     }
 
-    pub fn get_bishop_attack(square: Square, blockers: Bitboard) -> Bitboard {
+    pub fn bishop_attacks_otf(square: Square, blockers: Bitboard) -> Bitboard {
         let mut result = EMPTY;
         let target_rank = (square as i32) / 8;
         let target_file = (square as i32) % 8;
@@ -120,7 +123,14 @@ impl BishopAttacks {
         result
     }
 
-    pub fn populate() {
-        todo!()
+    pub fn get_bishop_attack(&self, square: Square, occupancy: Bitboard) -> Bitboard {
+        let square_num: usize = square as usize;
+        let mut occ = occupancy;
+
+        occ &= self.bishop_masks[square_num];
+        occ = occ.wrapping_mul(BISHOP_MAGICS[square_num]);
+        occ >>= 64 - bishop_relevant_bits[square_num];
+
+        self.bishop_attacks[square_num][occ as usize]
     }
 }

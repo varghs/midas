@@ -1,171 +1,220 @@
 use crate::engine::{bitboard::{Bitboard, EMPTY, ONE, LS1B}, square::Square, board::Piece};
 use self::bishop_attacks::{BishopAttacks, bishop_relevant_bits};
 use self::rook_attacks::{RookAttacks, rook_relevant_bits};
+use rand::Rng;
 
 pub mod bishop_attacks;
 pub mod rook_attacks;
 
-pub fn set_occupancy(
-    index: usize,
-    bits_mask_recieved: usize,
-    mut attack_mask: Bitboard,
-) -> Bitboard {
-    let mut occupancy: Bitboard = EMPTY;
+pub struct SliderAttacks {
+    pub bishops: BishopAttacks,
+    pub rooks: RookAttacks,
+}
 
-    let bits_in_mask = attack_mask.count_bits();
-    // println!(
-    //     "bits counted: {:4?} bits recieved: {:4?}",
-    //     bits_in_mask, bits_mask_recieved
-    // );
-    for i in 0..bits_mask_recieved {
-        // get LS1B index of attack_mask
-        if let Some(square_index) = attack_mask.pop_lsb() {
-            // make sure occupancy is on the board
-            if (index & (1 << i)) != 0 {
-                // populate occupancy map
-                occupancy |= ONE << square_index;
+impl SliderAttacks {
+    pub fn new() -> Self {
+        let bishops = BishopAttacks::new();
+        let rooks = RookAttacks::new();
+
+        Self { bishops, rooks }
+    }
+    pub fn set_occupancy(
+        index: usize,
+        bits_mask_recieved: usize,
+        mut attack_mask: Bitboard,
+    ) -> Bitboard {
+        let mut occupancy: Bitboard = EMPTY;
+
+        let bits_in_mask = attack_mask.count_bits();
+        // println!(
+        //     "bits counted: {:4?} bits recieved: {:4?}",
+        //     bits_in_mask, bits_mask_recieved
+        // );
+        for i in 0..bits_mask_recieved {
+            // get LS1B index of attack_mask
+            if let Some(square_index) = attack_mask.pop_lsb() {
+                // make sure occupancy is on the board
+                if (index & (1 << i)) != 0 {
+                    // populate occupancy map
+                    occupancy |= ONE << square_index;
+                }
             }
         }
+        // return
+        occupancy
     }
-    // return
-    occupancy
-}
 
-use rand::Rng;
-pub fn get_random_bitboard_nums() -> u64 {
-    let mut rng = rand::thread_rng();
-    let n1 = (rng.gen::<u32>() & 0xFFFF) as u64;
-    let n2 = (rng.gen::<u32>() & 0xFFFF) as u64;
-    let n3 = (rng.gen::<u32>() & 0xFFFF) as u64;
-    let n4 = (rng.gen::<u32>() & 0xFFFF) as u64;
+    pub fn get_random_bitboard_nums() -> u64 {
+        let mut rng = rand::thread_rng();
+        let n1 = (rng.gen::<u32>() & 0xFFFF) as u64;
+        let n2 = (rng.gen::<u32>() & 0xFFFF) as u64;
+        let n3 = (rng.gen::<u32>() & 0xFFFF) as u64;
+        let n4 = (rng.gen::<u32>() & 0xFFFF) as u64;
 
-    return n1 | (n2 << 16) | (n3 << 32) | (n4 << 48);
-}
+        return n1 | (n2 << 16) | (n3 << 32) | (n4 << 48);
+    }
 
-pub fn generate_magic_number() -> u64 {
-    return get_random_bitboard_nums() & get_random_bitboard_nums() & get_random_bitboard_nums();
-}
+    pub fn generate_magic_number() -> u64 {
+        return Self::get_random_bitboard_nums() & Self::get_random_bitboard_nums() & Self::get_random_bitboard_nums();
+    }
 
-pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece) -> Bitboard {
-    let mut occupancies = [EMPTY; 4096];
-    let mut attacks = [EMPTY; 4096];
-    let mut used_attacks = [EMPTY; 4096];
-    let attack_mask: Bitboard = match piece_type {
-        Piece::Bishop => BishopAttacks::mask_bishop_attack(square),
-        Piece::Rook => {
-            RookAttacks::mask_rook_attack(square)
-        },
-        _ => panic!("bro its gotta be rook or bishop LOLS"),
-    };
-    // print_bitboard(attack_mask);
-    let occupancy_indicies = 1 << relevant_bits;
-    // println!("occupancy_indicies is {}", occupancy_indicies);
-
-    for index in 0..occupancy_indicies {
-        // println!("index in occupancy indicies is {}", index);
-        occupancies[index] = set_occupancy(index, relevant_bits, attack_mask);
-        
-        // initialize the attacks
-        attacks[index] = if piece_type == Piece::Bishop {
-            BishopAttacks::get_bishop_attack(square, occupancies[index])
-        } else {
-            // eventually
-            RookAttacks::get_rook_attack(square, occupancies[index])
+    pub fn find_magic_number(square: Square, relevant_bits: usize, piece_type: Piece) -> Bitboard {
+        let mut occupancies = [EMPTY; 4096];
+        let mut attacks = [EMPTY; 4096];
+        let mut used_attacks = [EMPTY; 4096];
+        let attack_mask: Bitboard = match piece_type {
+            Piece::Bishop => BishopAttacks::mask_bishop_attack(square),
+            Piece::Rook => {
+                RookAttacks::mask_rook_attack(square)
+            },
+            _ => panic!("bro its gotta be rook or bishop LOLS"),
         };
+        // print_bitboard(attack_mask);
+        let occupancy_indicies = 1 << relevant_bits;
+        // println!("occupancy_indicies is {}", occupancy_indicies);
 
-        // // initialize the attacks
-        // attacks[index] = if piece_type == Piece::Bishop {
-        //     BishopAttacks::get_bishop_attack(square, occupancies[index])
-        // } else {
-        //     // eventually
-        //     // RookAttacks::get_rook_attack(square, occupancies[index])
-        //     0
-        // }
-        // attacks[index] = BishopAttacks::get_bishop_attack(square, occupancies[index]);
-    }
+        for index in 0..occupancy_indicies {
+            // println!("index in occupancy indicies is {}", index);
+            occupancies[index] = Self::set_occupancy(index, relevant_bits, attack_mask);
+            
+            // initialize the attacks
+            attacks[index] = if piece_type == Piece::Bishop {
+                BishopAttacks::bishop_attacks_otf(square, occupancies[index])
+            } else {
+                // eventually
+                RookAttacks::rook_attacks_otf(square, occupancies[index])
+            };
 
-    // for i in 0..occupancy_indicies {
-    //     println!("i: {} occupancies[]: {}", i, occupancies[i]);
-    // }
-
-    // test magic numbers
-    for _ in 0..10000000 {
-        // lol
-        let magic_number: u64 = generate_magic_number();
-        // println!("testing this {:x?}", magic_number);
-
-        // skip too small of magic numbers
-        if (magic_number.wrapping_mul(attack_mask) & 0xFF00000000000000).count_bits() < 6 {
-            // println!("number too small lol");
-            continue;
+            // // initialize the attacks
+            // attacks[index] = if piece_type == Piece::Bishop {
+            //     BishopAttacks::get_bishop_attack(square, occupancies[index])
+            // } else {
+            //     // eventually
+            //     // RookAttacks::get_rook_attack(square, occupancies[index])
+            //     0
+            // }
+            // attacks[index] = BishopAttacks::get_bishop_attack(square, occupancies[index]);
         }
 
-        used_attacks = [EMPTY; 4096];
+        // for i in 0..occupancy_indicies {
+        //     println!("i: {} occupancies[]: {}", i, occupancies[i]);
+        // }
 
-        // println!("found magic_number: {:?}", magic_number);
+        // test magic numbers
+        for _ in 0..10000000 {
+            // lol
+            let magic_number: u64 = Self::generate_magic_number();
+            // println!("testing this {:x?}", magic_number);
 
-        let mut index = 0;
-        let mut fail = false;
-
-        while fail == false && index < occupancy_indicies {
-            // init magic index
-            // println!("occupancies[index] is {}", occupancy_indicies);
-            let magic_index =
-                ((occupancies[index].wrapping_mul(magic_number)) >> (64 - relevant_bits)) as usize;
-
-            // println!("index: {}; magic_index: {:064b}", index, magic_index);
-
-            // println!(
-            //     "used_attacks[magic_index] is {:?}",
-            //     used_attacks[magic_index]
-            // );
-            if used_attacks[magic_index] == EMPTY {
-                used_attacks[magic_index] = attacks[index];
-                // println!(
-                //     "set used_attacks[{}] to attacks[{}] {}",
-                //     magic_index, index, attacks[index]
-                // );
-            } else if used_attacks[magic_index] != attacks[index] {
-                // magic index doesnt work
-                // COLLISION!!!
-                // println!(
-                //     "have used_attacks[{}] {} but attacks[{}] {}",
-                //     magic_index, used_attacks[magic_index], index, attacks[index]
-                // );
-                fail = true;
+            // skip too small of magic numbers
+            if (magic_number.wrapping_mul(attack_mask) & 0xFF00000000000000).count_bits() < 6 {
+                // println!("number too small lol");
+                continue;
             }
 
-            index += 1;
+            used_attacks = [EMPTY; 4096];
+
+            // println!("found magic_number: {:?}", magic_number);
+
+            let mut index = 0;
+            let mut fail = false;
+
+            while fail == false && index < occupancy_indicies {
+                // init magic index
+                // println!("occupancies[index] is {}", occupancy_indicies);
+                let magic_index =
+                    ((occupancies[index].wrapping_mul(magic_number)) >> (64 - relevant_bits)) as usize;
+
+                // println!("index: {}; magic_index: {:064b}", index, magic_index);
+
+                // println!(
+                //     "used_attacks[magic_index] is {:?}",
+                //     used_attacks[magic_index]
+                // );
+                if used_attacks[magic_index] == EMPTY {
+                    used_attacks[magic_index] = attacks[index];
+                    // println!(
+                    //     "set used_attacks[{}] to attacks[{}] {}",
+                    //     magic_index, index, attacks[index]
+                    // );
+                } else if used_attacks[magic_index] != attacks[index] {
+                    // magic index doesnt work
+                    // COLLISION!!!
+                    // println!(
+                    //     "have used_attacks[{}] {} but attacks[{}] {}",
+                    //     magic_index, used_attacks[magic_index], index, attacks[index]
+                    // );
+                    fail = true;
+                }
+
+                index += 1;
+            }
+
+            if !fail {
+                return magic_number;
+            }
         }
 
-        if !fail {
-            return magic_number;
+        println!("lol magic number somehow failed.. uh oh");
+        return EMPTY;
+    }
+
+    pub fn init_magic_testing() {
+        println!("Bishops");
+        for square_num in 0..64_usize {
+            // init bishop magics
+            let square: Square = square_num.try_into().unwrap();
+            let magic = Self::find_magic_number(square, bishop_relevant_bits[square_num], Piece::Bishop);
+            // TODO: Assignments
+            println!("{:#x?}", magic);
+        }
+
+        println!("Rooks");
+        for square_num in 0..64_usize {
+            // init rook magics
+            let square: Square = square_num.try_into().unwrap();
+            let magic = Self::find_magic_number(square, rook_relevant_bits[square_num], Piece::Rook);
+            // TODO: Assignments
+            println!("{:#x?}", magic);
         }
     }
 
-    println!("lol magic number somehow failed.. uh oh");
-    return EMPTY;
+    pub fn populate(&mut self, piece_type: Piece) {
+        for square_num in 0..64_usize {
+            let square: Square = square_num.try_into().unwrap();
+            self.bishops.bishop_masks[square_num] = BishopAttacks::mask_bishop_attack(square);
+            self.rooks.rook_masks[square_num] = RookAttacks::mask_rook_attack(square);
+
+            let attack_mask = match piece_type {
+                Piece::Bishop => self.bishops.bishop_masks[square_num],
+                Piece::Rook => self.rooks.rook_masks[square_num],
+                _ => panic!("Shouldn't be anything other than rook or bishop.")
+            };
+
+            let relevant_bits_count = attack_mask.count_bits();
+            let occupancy_indicies = ONE << relevant_bits_count;
+
+            for index in 0..occupancy_indicies as usize {
+                match piece_type {
+                    Piece::Bishop => {
+                        let occupancy = Self::set_occupancy(index, relevant_bits_count, attack_mask);
+                        let magic_index = occupancy.wrapping_mul(BISHOP_MAGICS[square_num]) >> (64 - bishop_relevant_bits[square_num]);
+                        self.bishops.bishop_attacks[square_num][magic_index as usize] = BishopAttacks::bishop_attacks_otf(square, occupancy);
+                    },
+                    Piece::Rook => {
+                        let occupancy = Self::set_occupancy(index, relevant_bits_count, attack_mask);
+                        let magic_index = occupancy.wrapping_mul(ROOK_MAGICS[square_num]) >> (64 - rook_relevant_bits[square_num]);
+                        self.rooks.rook_attacks[square_num][magic_index as usize] = RookAttacks::rook_attacks_otf(square, occupancy);
+
+                    },
+                    _ => panic!("I don't even know how it got to this point.")
+                }
+            }
+        }
+    }
 }
 
-pub fn init_magic_testing() {
-    println!("Bishops");
-    for square_num in 0..64_usize {
-        // init bishop magics
-        let square: Square = square_num.try_into().unwrap();
-        let magic = find_magic_number(square, bishop_relevant_bits[square_num], Piece::Bishop);
-        // TODO: Assignments
-        println!("{:#x?}", magic);
-    }
 
-    println!("Rooks");
-    for square_num in 0..64_usize {
-        // init rook magics
-        let square: Square = square_num.try_into().unwrap();
-        let magic = find_magic_number(square, rook_relevant_bits[square_num], Piece::Rook);
-        // TODO: Assignments
-        println!("{:#x?}", magic);
-    }
-}
 
 // if necessary
 const BISHOP_MAGICS: [u64; 64] = [
