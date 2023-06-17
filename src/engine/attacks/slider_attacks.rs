@@ -29,11 +29,6 @@ impl SliderAttacks {
     ) -> Bitboard {
         let mut occupancy: Bitboard = EMPTY;
 
-        let bits_in_mask = attack_mask.count_bits();
-        // println!(
-        //     "bits counted: {:4?} bits recieved: {:4?}",
-        //     bits_in_mask, bits_mask_recieved
-        // );
         for i in 0..bits_mask_recieved {
             // get LS1B index of attack_mask
             if let Some(square_index) = attack_mask.pop_lsb() {

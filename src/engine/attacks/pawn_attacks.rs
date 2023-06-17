@@ -8,7 +8,7 @@ use crate::{
 };
 
 pub struct PawnAttacks {
-    pawn_attacks: [[Bitboard; 64]; 2], // [color][square]
+    pub pawn_attacks: [[Bitboard; 64]; 2], // [color][square]
 }
 
 impl PawnAttacks {

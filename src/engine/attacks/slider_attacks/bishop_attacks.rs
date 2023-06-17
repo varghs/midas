@@ -1,6 +1,6 @@
 use crate::engine::bitboard::Bitboard;
-use crate::engine::square::Square;
 use crate::engine::bitboard::{EMPTY, NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, ONE};
+use crate::engine::square::Square;
 use crate::set_bit;
 
 use super::BISHOP_MAGICS;
@@ -19,7 +19,7 @@ pub const bishop_relevant_bits: [usize; 64] = [
 ];
 
 pub struct BishopAttacks {
-    pub bishop_masks: [Bitboard; 64], // [square]
+    pub bishop_masks: [Bitboard; 64],          // [square]
     pub bishop_attacks: [[Bitboard; 512]; 64], // [square][occupancy]
 }
 
@@ -27,7 +27,10 @@ impl BishopAttacks {
     pub fn new() -> Self {
         let bishop_masks = [0; 64];
         let bishop_attacks = [[0; 512]; 64];
-        Self { bishop_masks, bishop_attacks }
+        Self {
+            bishop_masks,
+            bishop_attacks,
+        }
     }
 
     pub fn mask_bishop_attack(square: Square) -> Bitboard {

@@ -4,7 +4,7 @@ use midas::{
     engine::{
         attacks::slider_attacks::SliderAttacks,
         attacks::AttackTables,
-        bitboard::{print_bitboard, Bitboard, EMPTY, LS1B, ONE},
+        bitboard::{print_attacked_squares, print_bitboard, Bitboard, EMPTY, LS1B, ONE},
         board::{Board, Castle, Color, Piece},
         fen::*,
         square::Square,
@@ -27,12 +27,12 @@ fn main() {
             let mut tables = AttackTables::new();
             tables.populate();
 
-            let mut b = Board::new();
+            let mut board = Board::new();
 
-            b.parse_fen(FEN(
-                "r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 b - - 0 9 ",
-            ));
-            println!("{}", b);
+            board.parse_fen(WHITE_PAWN);
+            println!("{}", board);
+            println!();
+            print_attacked_squares(&board, &tables, Color::White);
         })
         .unwrap()
         .join()

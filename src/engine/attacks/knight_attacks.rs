@@ -5,7 +5,7 @@ use crate::engine::{
 use crate::set_bit;
 
 pub struct KnightAttacks {
-    knight_attacks: [Bitboard; 64], // [color][square]
+    pub knight_attacks: [Bitboard; 64], // [color][square]
 }
 
 impl KnightAttacks {

@@ -1,6 +1,6 @@
 use super::super::bitboard::Bitboard;
 use super::super::square::Square;
-use crate::engine::bitboard::{NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, EMPTY};
+use crate::engine::bitboard::{EMPTY, NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE};
 use crate::set_bit;
 
 pub struct KingAttacks {
@@ -17,7 +17,7 @@ impl KingAttacks {
         let mut attacks: Bitboard = EMPTY;
         let mut bitboard: Bitboard = EMPTY;
         set_bit!(bitboard, square);
-        
+
         if bitboard & NOTHFILE > 0 {
             attacks |= bitboard << 1;
             attacks |= bitboard << 9;

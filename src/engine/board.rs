@@ -1,8 +1,8 @@
-use super::bitboard::{Bitboard, print_bitboard};
+use super::bitboard::{print_bitboard, Bitboard, EMPTY};
+use super::fen::FEN;
+use crate::engine::square::Square;
 use std::convert::TryFrom;
 use std::fmt::Display;
-use crate::engine::square::Square;
-use super::fen::FEN;
 
 use crate::{get_bit, set_bit};
 
@@ -42,7 +42,7 @@ impl TryFrom<char> for Piece {
             'B' | 'b' => Ok(Piece::Bishop),
             'Q' | 'q' => Ok(Piece::Queen),
             'K' | 'k' => Ok(Piece::King),
-            _ => Err("Invalid char to piece conversion".to_string())
+            _ => Err("Invalid char to piece conversion".to_string()),
         }
     }
 }
@@ -62,7 +62,7 @@ impl TryFrom<usize> for Piece {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Color {
     White,
     Black,
@@ -143,6 +143,7 @@ impl Display for CastleRep {
 pub struct Board {
     pub boards: [Bitboard; 8],
     pub side: Color,
+    pub occupancies: [Bitboard; 3],
     pub en_passant_sq: Option<Square>,
     pub castle: CastleRep,
 }
@@ -160,11 +161,13 @@ impl Board {
 
         let side = Color::White;
         let en_passant_sq: Option<Square> = Some(Square::e3);
+        let occupancies = [EMPTY; 3];
 
         let boards: [Bitboard; 8] = [white, black, pawns, rooks, knights, bishops, queens, kings];
         Board {
             boards,
             side,
+            occupancies,
             castle: CastleRep::new(),
             en_passant_sq,
         }
@@ -235,7 +238,7 @@ impl Board {
         match fen_iter.next() {
             Some('w') => self.side = Color::White,
             Some('b') => self.side = Color::Black,
-            _ => panic!("Invalid side in FEN.")
+            _ => panic!("Invalid side in FEN."),
         }
 
         fen_iter.next();
@@ -247,8 +250,8 @@ impl Board {
                 'Q' => self.castle.set_castle(Castle::WhiteQueen),
                 'k' => self.castle.set_castle(Castle::BlackKing),
                 'q' => self.castle.set_castle(Castle::BlackQueen),
-                '-' => {},
-                _ => panic!("Invalid castling in FEN.")
+                '-' => {}
+                _ => panic!("Invalid castling in FEN."),
             }
             char = fen_iter.next().unwrap();
         }
@@ -262,6 +265,10 @@ impl Board {
         } else {
             self.en_passant_sq = None;
         }
+
+        self.occupancies[Color::White as usize] |=
+            self.boards[Piece::Pawn as usize] & self.boards[Color::White as usize];
+        // todo the other occupancies
 
         println!("{}", fen_iter.as_str());
 
@@ -291,7 +298,7 @@ impl Display for Board {
                             match self.get_color(Color::White) & (1 << square) {
                                 0 => {
                                     output += format!("{} ", p).to_lowercase().as_str();
-                                },
+                                }
                                 _ => {
                                     output += format!("{} ", p).as_str();
                                 }
@@ -310,10 +317,14 @@ impl Display for Board {
         // print files
         output += "\n    a b c d e f g h \n";
         output += format!("Side to move: {} \n", self.side).as_str();
-        output += format!("En passant square: {}\n", match self.en_passant_sq {
-            Some(i) => i.to_string(),
-            None => String::from("None"),
-        }).as_str();
+        output += format!(
+            "En passant square: {}\n",
+            match self.en_passant_sq {
+                Some(i) => i.to_string(),
+                None => String::from("None"),
+            }
+        )
+        .as_str();
 
         output += format!("Castling: {}", self.castle).as_str();
 
