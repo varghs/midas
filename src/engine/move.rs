@@ -1,10 +1,21 @@
 use std::fmt::Display;
+use std::str::pattern::DoubleEndedSearcher;
+
+use crate::pop_bit;
+use crate::set_bit;
 
 use super::bitboard::Bitboard;
 use super::board::Board;
+use super::board::BoardState;
 use super::board::Color;
 use super::board::Piece;
 use super::square::Square;
+
+#[derive(PartialEq)]
+pub enum MoveType {
+    AllMoves,
+    OnlyCaptures,
+}
 
 // u16: 0000 0000 0011 1111 - source 
 //      0000 1111 1100 0000 - target
@@ -121,6 +132,34 @@ impl Display for MoveList {
         output += format!("Total moves: {}\n", self.count).as_str();
 
         write!(f, "{}", output)
+    }
+}
+
+impl BoardState {
+    fn make_move(&mut self, m: Move, move_flag: MoveType) {
+        // quiet move
+        if move_flag == MoveType::AllMoves {
+            self.preserve();
+            let source = m.get_source();
+            let target = m.get_target();
+            let piece = m.get_piece();
+            let color = m.get_color();
+            let promoted_piece = m.get_promoted_piece();
+            let promoted_color = m.get_promoted_color();
+            let capture = m.capture();
+            let double_pawn_push = m.double_push();
+            let en_passant = m.en_passant();
+            let castling = m.castling();
+            pop_bit!(self.board.boards[piece as usize], source);
+            set_bit!(self.board.boards[piece as usize], target);
+        } else { // capture
+            // make sure move is capture
+            if m.capture() {
+                self.make_move(m, MoveType::AllMoves);
+            } else { // don't make move
+                return;
+            }
+        }
     }
 }
 

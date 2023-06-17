@@ -97,6 +97,7 @@ pub enum Castle {
     BlackQueen = 8,
 }
 
+#[derive(Clone, Copy)]
 pub struct CastleRep(pub u8);
 
 impl CastleRep {
@@ -297,5 +298,37 @@ impl Display for Board {
         output += format!("Castling: {}", self.castle).as_str();
 
         write!(f, "{}", output)
+    }
+}
+
+pub struct BoardState {
+    pub board: Board,
+    pub boards_copy: [Bitboard; 8],
+    pub side_copy: Color,
+    pub en_passant_sq_copy: Option<Square>,
+    pub castle_copy: CastleRep,
+}
+
+impl BoardState {
+    pub fn new() -> Self {
+        let board = Board::new();
+        let mut ret = Self { board, boards_copy: [0; 8], side_copy: Color::White, en_passant_sq_copy: None, castle_copy: CastleRep(0)};
+        ret.preserve();
+        ret
+    }
+
+    pub fn preserve(&mut self) {
+        self.boards_copy = [0; 8];
+        self.boards_copy.copy_from_slice(&self.board.boards[..]);
+        self.side_copy = self.board.side;
+        self.en_passant_sq_copy = self.board.en_passant_sq;
+        self.castle_copy = self.board.castle;
+    }
+
+    pub fn restore(&mut self) {
+        self.board.boards.copy_from_slice(&self.boards_copy[..]);
+        self.board.side = self.side_copy;
+        self.board.en_passant_sq = self.en_passant_sq_copy;
+        self.board.castle = self.castle_copy;
     }
 }

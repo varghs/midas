@@ -5,7 +5,7 @@ use midas::{
         attacks::slider_attacks::SliderAttacks,
         attacks::AttackTables,
         bitboard::{print_bitboard, Bitboard, EMPTY, LS1B, ONE},
-        board::{Board, Castle, Color, Piece},
+        board::{Board, Castle, Color, Piece, BoardState},
         fen::*,
         square::Square,
         move_gen::*,
@@ -31,11 +31,18 @@ fn main() {
 
             let updated_init = FEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1 ");
 
-            let mut b = Board::new();
+            let mut b = BoardState::new();
             let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
 
-            b.parse_fen(TRICKY_POSITION);
-            println!("{}", b);
+            b.board.parse_fen(START_POSITION);
+            println!("{}", b.board);
+            b.preserve();
+
+            b.board.parse_fen(fen);
+            println!("{}", b.board);
+
+            b.restore();
+            println!("{}", b.board);
         })
         .unwrap()
         .join()
