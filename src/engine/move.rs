@@ -3,49 +3,63 @@ use super::board::Board;
 use super::board::Color;
 use super::board::Piece;
 use super::square::Square;
-// 000000, 000000, 0        , 0      , 0        , 0
-//  from ,   to  , promotion, capture, special 1, special 0
+
+// u16: 0000 0000 0011 1111 - source 
+//      0000 1111 1100 0000 - target
+//      0001 0000 0000 0000 - capture
+//      0010 0000 0000 0000 - double push
+//      0100 0000 0000 0000 - en-passant
+//      1000 0000 0000 0000 - castling
+//
+//  Piece: piece moved
+//  Color: color moved
+//  Option<Piece>: piece promoted 
+//  Option<Color>: color promoted 
 pub struct Move(u16, Piece, Color, Option<Piece>, Option<Color>);
 
 impl Move {
-    fn get_from(&self) -> Square {
-        let s: Square = (self.0 >> 10).try_into().unwrap();
+    pub fn new(source: Square, target: Square, moved_piece: Piece, moved_color: Color, promoted_piece: Option<Piece>, promoted_color: Option<Color>, capture: bool, double_push: bool, en_passant: bool, castling: bool) -> Self {
+        let num = (source as u16) | ((target as u16) << 6) | ((capture as u16) << 12) | ((double_push as u16) << 13) | ((en_passant as u16) << 14) | ((castling as u16) << 15); 
+        Move(num, moved_piece, moved_color, promoted_piece, promoted_color)
+    }
+    pub fn get_source(&self) -> Square {
+        let s = (self.0 & 0x003F).try_into().unwrap();
         s
     }
 
-    fn get_to(&self) -> Square {
-        let s: Square = ((0x3F0 & self.0) >> 4).try_into().unwrap();
+    pub fn get_target(&self) -> Square {
+        let s = ((self.0 & 0x0FC0) >> 6).try_into().unwrap();
         s
     }
 
-    fn promotion(&self) -> bool {
-        0x8 & self.0 > 0
+    pub fn capture(&self) -> bool {
+        self.0 & 0x1000 > 0
     }
 
-    fn capture(&self) -> bool {
-        0x4 & self.0 > 0
+    pub fn double_push(&self) -> bool {
+        self.0 & 0x2000 > 0
     }
 
-    fn special_one(&self) -> bool {
-        0x2 & self.0 > 0
+    pub fn en_passant(&self) -> bool {
+        self.0 & 0x4000 > 0
     }
 
-    fn special_zero(&self) -> bool {
-        0x1 & self.0 > 0
+    pub fn castling(&self) -> bool {
+        self.0 & 0x8000 > 0
     }
 
-    fn get_piece(&self) -> Piece {
+    pub fn get_piece(&self) -> Piece {
         self.1
     }
 
-    fn get_color(&self) -> Color {
+    pub fn get_color(&self) -> Color {
         self.2
     }
 
-    fn get_captured_piece(&self) -> Option<Piece> {
+    pub fn get_promoted_piece(&self) -> Option<Piece> {
         self.3
     }
-    fn get_captured_color(&self) -> Option<Color> {
+    pub fn get_promoted_color(&self) -> Option<Color> {
         self.4
     }
 }

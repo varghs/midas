@@ -8,7 +8,8 @@ use midas::{
         board::{Board, Castle, Color, Piece},
         fen::*,
         square::Square,
-        move_gen::*
+        move_gen::*,
+        r#move::Move
     },
     set_bit,
 };
@@ -34,6 +35,9 @@ fn main() {
             b.parse_fen(fen);
             println!("{}", b);
             b.generate_moves();
+
+            let m = Move::new(Square::e2, Square::e4, Piece::Pawn, Color::White, None, None, false, true, false, false);
+            println!("{}", m.castling());
         })
         .unwrap()
         .join()

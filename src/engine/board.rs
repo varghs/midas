@@ -100,7 +100,7 @@ pub enum Castle {
 pub struct CastleRep(pub u8);
 
 impl CastleRep {
-    pub fn new() -> Self {
+    pub fn default() -> Self {
         Self(0xF)
     }
     pub fn can_castle(&self, castle: Castle) -> bool {
@@ -178,7 +178,7 @@ impl Board {
         Board {
             boards,
             side,
-            castle: CastleRep::new(),
+            castle: CastleRep::default(),
             en_passant_sq,
             attack_tables,
         }
