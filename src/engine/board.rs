@@ -62,7 +62,7 @@ impl TryFrom<usize> for Piece {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum Color {
     White,
     Black,
@@ -272,6 +272,45 @@ impl Board {
         println!("{}", fen_iter.as_str());
 
         // todo: half move clock and fullmove counter
+    }
+
+    pub fn is_square_attacked(&self, square: Square, side: Color) -> bool {
+
+        // attacked by white pawns 
+        if side == Color::White && (self.attack_tables.pawns.pawn_attacks[Color::Black as usize][square as usize] & self.get_piece_of_color(Piece::Pawn, Color::White) > 0) {
+            return true;
+        }
+
+        // attacked by black pawns 
+        if side == Color::Black && (self.attack_tables.pawns.pawn_attacks[Color::White as usize][square as usize] & self.get_piece_of_color(Piece::Pawn, Color::White) > 0) {
+            return true;
+        }
+
+        // attacked by knight
+        if self.attack_tables.knights.knight_attacks[square as usize] & self.get_piece_of_color(Piece::Knight, side) > 0 {
+            return true;
+        }
+
+        // attacked by bishop
+        if (self.attack_tables.sliders.bishops.get_bishop_attack(square, self.get_occupancies()) & self.get_piece_of_color(Piece::Bishop, side)) > 0 {
+            return true;
+        }
+
+        // attacked by rook 
+        if (self.attack_tables.sliders.rooks.get_rook_attack(square, self.get_occupancies()) & self.get_piece_of_color(Piece::Rook, side)) > 0 {
+            return true;
+        }
+
+        // attacked by queen 
+        if (self.attack_tables.sliders.get_queen_attack(square, self.get_occupancies()) & self.get_piece_of_color(Piece::Queen, side)) > 0 {
+            return true;
+        }
+        // attacked by king
+        if self.attack_tables.kings.king_attacks[square as usize] & self.get_piece_of_color(Piece::King, side) > 0 {
+            return true;
+        }
+
+        false
     }
 }
 

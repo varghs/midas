@@ -1,6 +1,6 @@
 use crate::get_bit;
 
-use super::{square::{Square, ASCII_SQUARE}, bitboard::{Bitboard, LS1B, ONE}, board::{Board, Piece, Color}};
+use super::{square::{Square, ASCII_SQUARE}, bitboard::{Bitboard, LS1B, ONE}, board::{Board, Piece, Color, Castle}};
 
 impl Board {
     pub fn generate_moves(&self) {
@@ -66,6 +66,21 @@ impl Board {
                             }
 
                             bitboard.pop_lsb();
+                        }
+                    }
+                    
+                    // generate castling moves
+                    if piece == (Piece::King as usize) {
+                        // king side
+                        if self.castle.can_castle(Castle::WhiteKing) {
+                            if !get_bit!(self.get_occupancies(), Square::f1) && !get_bit!(self.get_occupancies(), Square::g1) {
+
+                            }
+                        }
+
+                        // queen side
+                        if self.castle.can_castle(Castle::WhiteQueen) {
+
                         }
                     }
                 } 
