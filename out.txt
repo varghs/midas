@@ -6,21 +6,16 @@
  5  . . . P N . . . 
  4  . p . . P . . . 
  3  . . N . . Q . p 
- 2  P P P B B P P P 
+ 2  P P P B B P p P 
  1  R . . . K . . R 
 
     a b c d e f g h 
 Side to move: Black 
-En passant square: None
+En passant square: a3
 Castling: KQkq
-pawn capture: h3g2
-pawn push: b4b3
 pawn capture: b4c3
+pawn en passant capture: b4a3
 pawn capture: e6d5
-pawn push: g6g5
-pawn push: c7c6
-double pawn push: c7c5
-pawn push: d7d6
 piece quiet move: a8b8
 piece quiet move: a8c8
 piece quiet move: a8d8
@@ -56,3 +51,22 @@ castling move: e8g8
 castling move: e8c8
 piece quiet move: e8d8
 piece quiet move: e8f8
+
+source, target, moved_piece, moved_color, promoted_piece, promoted_color, capture, double_push, en_passant, castling
+g2      g1      P            Black        Q               Black           false    false        false       false   
+g2      g1      P            Black        R               Black           false    false        false       false   
+g2      g1      P            Black        B               Black           false    false        false       false   
+g2      g1      P            Black        N               Black           false    false        false       false   
+g2      h1      P            Black        Q               Black           true     false        false       false   
+g2      h1      P            Black        R               Black           true     false        false       false   
+g2      h1      P            Black        B               Black           true     false        false       false   
+g2      h1      P            Black        N               Black           true     false        false       false   
+b4      b3      P            Black        None            None            false    false        false       false   
+b4      c3      P            Black        None            None            true     false        false       false   
+e6      d5      P            Black        None            None            true     false        false       false   
+g6      g5      P            Black        None            None            false    false        false       false   
+c7      c6      P            Black        None            None            false    false        false       false   
+c7      c5      P            Black        None            None            false    true         false       false   
+d7      d6      P            Black        None            None            false    false        false       false   
+Total moves: 15
+

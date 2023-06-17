@@ -1,9 +1,10 @@
-use crate::get_bit;
+use crate::{get_bit, engine::r#move::Move};
 
 use super::{square::{Square, ASCII_SQUARE}, bitboard::{Bitboard, LS1B, ONE}, board::{Board, Piece, Color, Castle}};
 
 impl Board {
-    pub fn generate_moves(&self) {
+    pub fn generate_moves(&mut self) {
+        self.move_list.count = 0;
         let (mut source, mut target): (i32, i32);
         let (mut bitboard, mut attacks): (Bitboard, Bitboard);
 
@@ -23,15 +24,15 @@ impl Board {
                             !(get_bit!(self.get_occupancies(), target)) {
                                 // 
                                 if source >= Square::a7 as i32 && source <= Square::h7 as i32 {
-                                    println!("pawn promotion: {}{}q", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn promotion: {}{}r", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn promotion: {}{}b", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn promotion: {}{}n", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, Some(Piece::Queen), Some(Color::White), false, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, Some(Piece::Rook), Some(Color::White), false, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, Some(Piece::Bishop), Some(Color::White), false, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, Some(Piece::Knight), Some(Color::White), false, false, false, false));
                                 } else {
-                                    println!("pawn push: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, None, None, false, false, false, false));
                                     if (source >= Square::a2 as i32 && source <= Square::h2 as i32) &&
                                     !(get_bit!(self.get_occupancies(), target + 8)){
-                                        println!("double pawn push: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[(target + 8) as usize])
+                                        self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), ((target + 8) as u64).try_into().unwrap(), Piece::Pawn, Color::White, None, None, false, true, false, false));
                                     }
                                 }
                             }
@@ -43,12 +44,12 @@ impl Board {
                                 target = attacks.index_of_lsb().unwrap() as i32;
 
                                 if source >= Square::a7 as i32 && source <= Square::h7 as i32 {
-                                    println!("pawn capture promotion: {}{}q", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn capture promotion: {}{}r", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn capture promotion: {}{}b", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn capture promotion: {}{}n", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, Some(Piece::Queen), Some(Color::White), true, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, Some(Piece::Rook), Some(Color::White), true, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, Some(Piece::Bishop), Some(Color::White), true, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, Some(Piece::Knight), Some(Color::White), true, false, false, false));
                                 } else {
-                                    println!("pawn capture: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::White, None, None, true, false, false, false));
                                 }
 
                                 attacks.pop_lsb();
@@ -60,7 +61,7 @@ impl Board {
 
                                 if en_passant_attacks > 0 {
                                     let target_en_passant = en_passant_attacks.index_of_lsb().unwrap();
-                                    println!("pawn en passant capture: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target_en_passant as usize])
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target_en_passant as u64).try_into().unwrap(), Piece::Pawn, Color::White, None, None, true, false, true, false));
                                 }
                             }
 
@@ -74,7 +75,7 @@ impl Board {
                         if self.castle.can_castle(Castle::WhiteKing) {
                             if !get_bit!(self.get_occupancies(), Square::f1) && !get_bit!(self.get_occupancies(), Square::g1) {
                                if !self.is_square_attacked(Square::e1, Color::Black) && !self.is_square_attacked(Square::f1, Color::Black) {
-                                    println!("castling move: e1g1");
+                                    self.move_list.add_move(Move::new(Square::e1, Square::g1, Piece::King, Color::White, None, None, false, false, false, true));
                                 } 
                             }
                         }
@@ -83,7 +84,7 @@ impl Board {
                         if self.castle.can_castle(Castle::WhiteQueen) {
                             if !get_bit!(self.get_occupancies(), Square::d1) && !get_bit!(self.get_occupancies(), Square::c1) && !get_bit!(self.get_occupancies(), Square::b1) {
                                if !self.is_square_attacked(Square::e1, Color::Black) && !self.is_square_attacked(Square::d1, Color::Black) {
-                                    println!("castling move: e1c1");
+                                    self.move_list.add_move(Move::new(Square::e1, Square::c1, Piece::King, Color::White, None, None, false, false, false, true));
                                 } 
                             }
                         }
@@ -100,15 +101,15 @@ impl Board {
                             !(get_bit!(self.get_occupancies(), target)) {
                                 // 
                                 if source >= Square::a2 as i32 && source <= Square::h2 as i32 {
-                                    println!("pawn promotion: {}{}q", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn promotion: {}{}r", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn promotion: {}{}b", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn promotion: {}{}n", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, Some(Piece::Queen), Some(Color::Black), false, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, Some(Piece::Rook), Some(Color::Black), false, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, Some(Piece::Bishop), Some(Color::Black), false, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, Some(Piece::Knight), Some(Color::Black), false, false, false, false));
                                 } else {
-                                    println!("pawn push: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, None, None, false, false, false, false));
                                     if (source >= Square::a7 as i32 && source <= Square::h7 as i32) &&
                                     !(get_bit!(self.get_occupancies(), target - 8)){
-                                        println!("double pawn push: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[(target - 8) as usize])
+                                        self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), ((target - 8) as u64).try_into().unwrap(), Piece::Pawn, Color::Black, None, None, false, true, false, false));
                                     }
                                 }
                             }
@@ -120,12 +121,12 @@ impl Board {
                                 target = attacks.index_of_lsb().unwrap() as i32;
 
                                 if source >= Square::a2 as i32 && source <= Square::h2 as i32 {
-                                    println!("pawn capture promotion: {}{}q", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn capture promotion: {}{}r", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn capture promotion: {}{}b", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
-                                    println!("pawn capture promotion: {}{}n", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, Some(Piece::Queen), Some(Color::Black), true, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, Some(Piece::Rook), Some(Color::Black), true, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, Some(Piece::Bishop), Some(Color::Black), true, false, false, false));
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, Some(Piece::Knight), Some(Color::Black), true, false, false, false));
                                 } else {
-                                    println!("pawn capture: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Pawn, Color::Black, None, None, true, false, false, false));
                                 }
 
                                 attacks.pop_lsb();
@@ -137,7 +138,7 @@ impl Board {
 
                                 if en_passant_attacks > 0 {
                                     let target_en_passant = en_passant_attacks.index_of_lsb().unwrap();
-                                    println!("pawn en passant capture: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target_en_passant as usize])
+                                    self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target_en_passant as u64).try_into().unwrap(), Piece::Pawn, Color::Black, None, None, true, false, true, false));
                                 }
                             }
                             bitboard.pop_lsb();
@@ -150,7 +151,7 @@ impl Board {
                         if self.castle.can_castle(Castle::BlackKing) {
                             if !get_bit!(self.get_occupancies(), Square::f8) && !get_bit!(self.get_occupancies(), Square::g8) {
                                if !self.is_square_attacked(Square::e8, Color::White) && !self.is_square_attacked(Square::f8, Color::White) {
-                                    println!("castling move: e8g8");
+                                    self.move_list.add_move(Move::new(Square::e8, Square::g8, Piece::King, Color::Black, None, None, false, false, false, true));
                                 } 
                             }
                         }
@@ -159,7 +160,7 @@ impl Board {
                         if self.castle.can_castle(Castle::BlackQueen) {
                             if !get_bit!(self.get_occupancies(), Square::d8) && !get_bit!(self.get_occupancies(), Square::c8) && !get_bit!(self.get_occupancies(), Square::b8) {
                                if !self.is_square_attacked(Square::e8, Color::White) && !self.is_square_attacked(Square::d8, Color::White) {
-                                    println!("castling move: e8c8");
+                                    self.move_list.add_move(Move::new(Square::e8, Square::c8, Piece::King, Color::Black, None, None, false, false, false, true));
                                 } 
                             }
                         }
@@ -178,10 +179,11 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Knight, self.side, None, None, false, false, false, false));
                         } else {
                             // capture move
                             println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Knight, self.side, None, None, true, false, false, false));
                         }
 
                         
@@ -203,10 +205,10 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Bishop, self.side, None, None, false, false, false, false));
                         } else {
                             // capture move
-                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Bishop, self.side, None, None, true, false, false, false));
                         }
 
                         
@@ -228,10 +230,10 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Rook, self.side, None, None, false, false, false, false));
                         } else {
                             // capture move
-                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Rook, self.side, None, None, true, false, false, false));
                         }
 
                         
@@ -253,10 +255,10 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Queen, self.side, None, None, false, false, false, false));
                         } else {
                             // capture move
-                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Queen, self.side, None, None, true, false, false, false));
                         }
 
                         
@@ -278,10 +280,10 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::King, self.side, None, None, false, false, false, false));
                         } else {
                             // capture move
-                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                            self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::King, self.side, None, None, true, false, false, false));
                         }
 
                         

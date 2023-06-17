@@ -102,6 +102,9 @@ impl MoveList {
 
 impl Display for MoveList {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.count == 0 {
+            return write!(f, "No moves in move list.");
+        }
         let mut output = String::from("source, target, moved_piece, moved_color, promoted_piece, promoted_color, capture, double_push, en_passant, castling\n");
         for move_count in 0..self.count {
             let m = &self.moves[move_count];
