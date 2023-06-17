@@ -1,73 +1,7 @@
-r
-3
-k
-2
-r
-6
-/
-p
-1
-p
-p
-q
-p
-b
-1
-5
-/
-b
-n
-2
-p
-n
-p
-1
-4
-/
-3
-P
-N
-3
-3
-/
-1
-p
-2
-P
-3
-2
-/
-2
-N
-2
-Q
-1
-p
-1
-/
-P
-P
-P
-B
-B
-P
-P
-P
-0
-/
-R
-3
-K
-2
-R
--1
-Q
-k
-q
-- 0 1 
+ 0 1 
 
  8  r . . . k . . r 
- 7  p . p p q p b . 
+ 7  p P p p q p b . 
  6  b n . . p n p . 
  5  . . . P N . . . 
  4  . p . . P . . . 
@@ -78,4 +12,20 @@ q
     a b c d e f g h 
 Side to move: White 
 En passant square: None
-Castling: -Qkq
+Castling: KQkq
+pawn push: a2a3
+double pawn push: a2a4
+pawn push: b2b3
+pawn push: g2g3
+double pawn push: g2g4
+pawn capture: g2h3
+pawn push: d5d6
+pawn capture: d5e6
+pawn promotion: b7b8q
+pawn promotion: b7b8r
+pawn promotion: b7b8b
+pawn promotion: b7b8n
+pawn capture promotion: b7a8q
+pawn capture promotion: b7a8r
+pawn capture promotion: b7a8b
+pawn capture promotion: b7a8n

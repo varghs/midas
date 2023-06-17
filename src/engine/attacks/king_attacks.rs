@@ -4,7 +4,7 @@ use crate::engine::bitboard::{NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, EMPTY};
 use crate::set_bit;
 
 pub struct KingAttacks {
-    king_attacks: [Bitboard; 64], // [color][square]
+    pub king_attacks: [Bitboard; 64], // [color][square]
 }
 
 impl KingAttacks {

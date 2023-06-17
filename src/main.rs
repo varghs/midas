@@ -8,6 +8,7 @@ use midas::{
         board::{Board, Castle, Color, Piece},
         fen::*,
         square::Square,
+        move_gen::*
     },
     set_bit,
 };
@@ -28,11 +29,11 @@ fn main() {
             tables.populate();
 
             let mut b = Board::new();
+            let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/Pp2P3/2N2Q1p/1PPBBPpP/R3K2R b KQkq a3 0 1 ");
 
-            b.parse_fen(FEN(
-                "r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 b - - 0 9 ",
-            ));
+            b.parse_fen(fen);
             println!("{}", b);
+            b.generate_moves();
         })
         .unwrap()
         .join()

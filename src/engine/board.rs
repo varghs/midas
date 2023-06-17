@@ -1,4 +1,4 @@
-use super::bitboard::{Bitboard, print_bitboard};
+use super::{bitboard::{Bitboard, print_bitboard}, attacks::AttackTables};
 use std::convert::TryFrom;
 use std::fmt::Display;
 use crate::engine::square::Square;
@@ -145,6 +145,7 @@ pub struct Board {
     pub side: Color,
     pub en_passant_sq: Option<Square>,
     pub castle: CastleRep,
+    pub attack_tables: AttackTables,
 }
 
 impl Board {
@@ -161,12 +162,16 @@ impl Board {
         let side = Color::White;
         let en_passant_sq: Option<Square> = Some(Square::e3);
 
+        let mut attack_tables = AttackTables::new();
+        attack_tables.populate();
+
         let boards: [Bitboard; 8] = [white, black, pawns, rooks, knights, bishops, queens, kings];
         Board {
             boards,
             side,
             castle: CastleRep::new(),
             en_passant_sq,
+            attack_tables,
         }
     }
 
@@ -181,6 +186,10 @@ impl Board {
 
     pub fn get_color(&self, c: Color) -> Bitboard {
         self.boards[c as usize]
+    }
+
+    pub fn get_occupancies(&self) -> Bitboard {
+        self.get_color(Color::White) | self.get_color(Color::Black)
     }
 
     pub fn get_piece_of_color(&self, p: Piece, c: Color) -> Bitboard {
@@ -222,11 +231,9 @@ impl Board {
                     break_condition = true;
                     break;
                 }
-                println!("{}", char);
             }
             rank -= 1;
             file = 0;
-            println!("{}", rank);
             if break_condition {
                 break;
             }
@@ -241,7 +248,6 @@ impl Board {
         fen_iter.next();
         let mut char = fen_iter.next().unwrap();
         while char != ' ' {
-            println!("{}", char);
             match char {
                 'K' => self.castle.set_castle(Castle::WhiteKing),
                 'Q' => self.castle.set_castle(Castle::WhiteQueen),
