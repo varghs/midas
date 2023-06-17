@@ -29,7 +29,7 @@ fn main() {
             tables.populate();
 
             let mut b = Board::new();
-            let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/Pp2P3/2N2Q1p/1PPBBPpP/R3K2R b KQkq a3 0 1 ");
+            let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
 
             b.parse_fen(fen);
             println!("{}", b);

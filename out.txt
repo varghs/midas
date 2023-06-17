@@ -1,7 +1,7 @@
  0 1 
 
  8  r . . . k . . r 
- 7  p P p p q p b . 
+ 7  p . p p q p b . 
  6  b n . . p n p . 
  5  . . . P N . . . 
  4  . p . . P . . . 
@@ -10,22 +10,49 @@
  1  R . . . K . . R 
 
     a b c d e f g h 
-Side to move: White 
+Side to move: Black 
 En passant square: None
 Castling: KQkq
-pawn push: a2a3
-double pawn push: a2a4
-pawn push: b2b3
-pawn push: g2g3
-double pawn push: g2g4
-pawn capture: g2h3
-pawn push: d5d6
-pawn capture: d5e6
-pawn promotion: b7b8q
-pawn promotion: b7b8r
-pawn promotion: b7b8b
-pawn promotion: b7b8n
-pawn capture promotion: b7a8q
-pawn capture promotion: b7a8r
-pawn capture promotion: b7a8b
-pawn capture promotion: b7a8n
+pawn capture: h3g2
+pawn push: b4b3
+pawn capture: b4c3
+pawn capture: e6d5
+pawn push: g6g5
+pawn push: c7c6
+double pawn push: c7c5
+pawn push: d7d6
+piece quiet move: a8b8
+piece quiet move: a8c8
+piece quiet move: a8d8
+piece quiet move: h8h4
+piece quiet move: h8h5
+piece quiet move: h8h6
+piece quiet move: h8h7
+piece quiet move: h8f8
+piece quiet move: h8g8
+piece quiet move: b6a4
+piece quiet move: b6c4
+piece capture move: b6d5
+piece quiet move: b6c8
+piece capture move: f6e4
+piece quiet move: f6g4
+piece capture move: f6d5
+piece quiet move: f6h5
+piece quiet move: f6h7
+piece quiet move: f6g8
+piece capture move: a6e2
+piece quiet move: a6d3
+piece quiet move: a6c4
+piece quiet move: a6b5
+piece quiet move: a6b7
+piece quiet move: a6c8
+piece quiet move: g7h6
+piece quiet move: g7f8
+piece quiet move: e7c5
+piece quiet move: e7d6
+piece quiet move: e7d8
+piece quiet move: e7f8
+castling move: e8g8
+castling move: e8c8
+piece quiet move: e8d8
+piece quiet move: e8f8

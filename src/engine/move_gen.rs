@@ -7,13 +7,12 @@ impl Board {
         let (mut source, mut target): (i32, i32);
         let (mut bitboard, mut attacks): (Bitboard, Bitboard);
 
-        for piece in (Piece::Pawn as usize)..(Piece::King as usize) {
-            bitboard = self.boards[piece];
+        for piece in (Piece::Pawn as usize)..=(Piece::King as usize) {
+            bitboard = self.get_piece_of_color(piece.try_into().unwrap(), self.side);
 
             match self.side {
                 // white pawns and castling,
                 Color::White => {
-                    bitboard &= self.boards[Color::White as usize];
                     if piece == (Piece::Pawn as usize) {
                         while bitboard > 0 {
                             source = bitboard.index_of_lsb().unwrap() as i32;
@@ -74,18 +73,23 @@ impl Board {
                         // king side
                         if self.castle.can_castle(Castle::WhiteKing) {
                             if !get_bit!(self.get_occupancies(), Square::f1) && !get_bit!(self.get_occupancies(), Square::g1) {
-
+                               if !self.is_square_attacked(Square::e1, Color::Black) && !self.is_square_attacked(Square::f1, Color::Black) {
+                                    println!("castling move: e1g1");
+                                } 
                             }
                         }
 
                         // queen side
                         if self.castle.can_castle(Castle::WhiteQueen) {
-
+                            if !get_bit!(self.get_occupancies(), Square::d1) && !get_bit!(self.get_occupancies(), Square::c1) && !get_bit!(self.get_occupancies(), Square::b1) {
+                               if !self.is_square_attacked(Square::e1, Color::Black) && !self.is_square_attacked(Square::d1, Color::Black) {
+                                    println!("castling move: e1c1");
+                                } 
+                            }
                         }
                     }
                 } 
                 Color::Black => {
-                    bitboard &= self.boards[Color::Black as usize];
                     if piece == (Piece::Pawn as usize) {
                         while bitboard > 0 {
                             source = bitboard.index_of_lsb().unwrap() as i32;
@@ -139,18 +143,154 @@ impl Board {
                             bitboard.pop_lsb();
                         }
                     }
+
+                    // generate castling moves
+                    if piece == (Piece::King as usize) {
+                        // king side
+                        if self.castle.can_castle(Castle::BlackKing) {
+                            if !get_bit!(self.get_occupancies(), Square::f8) && !get_bit!(self.get_occupancies(), Square::g8) {
+                               if !self.is_square_attacked(Square::e8, Color::White) && !self.is_square_attacked(Square::f8, Color::White) {
+                                    println!("castling move: e8g8");
+                                } 
+                            }
+                        }
+
+                        // queen side
+                        if self.castle.can_castle(Castle::BlackQueen) {
+                            if !get_bit!(self.get_occupancies(), Square::d8) && !get_bit!(self.get_occupancies(), Square::c8) && !get_bit!(self.get_occupancies(), Square::b8) {
+                               if !self.is_square_attacked(Square::e8, Color::White) && !self.is_square_attacked(Square::d8, Color::White) {
+                                    println!("castling move: e8c8");
+                                } 
+                            }
+                        }
+                    }
                 } // black pawns and castling,
             }
 
             // knight
+            if piece == (Piece::Knight as usize) {
+                while bitboard > 0 {
+                    source = bitboard.index_of_lsb().unwrap() as i32;
+                    attacks = self.attack_tables.knights.knight_attacks[source as usize] & !self.get_color(self.side);
+                    
+                    while attacks > 0 {
+                        target = attacks.index_of_lsb().unwrap() as i32;
+
+                        // quiet move
+                        if !get_bit!(self.get_color(!self.side), target) {
+                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        } else {
+                            // capture move
+                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        }
+
+                        
+
+                        attacks.pop_lsb();
+                    } 
+                    bitboard.pop_lsb();
+                }
+            }
             
             // bishop
-            
+            if piece == (Piece::Bishop as usize) {
+                while bitboard > 0 {
+                    source = bitboard.index_of_lsb().unwrap() as i32;
+                    attacks = self.attack_tables.sliders.bishops.get_bishop_attack((source as u64).try_into().unwrap(), self.get_occupancies()) & !self.get_color(self.side);
+                    
+                    while attacks > 0 {
+                        target = attacks.index_of_lsb().unwrap() as i32;
+
+                        // quiet move
+                        if !get_bit!(self.get_color(!self.side), target) {
+                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        } else {
+                            // capture move
+                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        }
+
+                        
+
+                        attacks.pop_lsb();
+                    } 
+                    bitboard.pop_lsb();
+                }
+            }
+
             // rook
-            
+            if piece == (Piece::Rook as usize) {
+                while bitboard > 0 {
+                    source = bitboard.index_of_lsb().unwrap() as i32;
+                    attacks = self.attack_tables.sliders.rooks.get_rook_attack((source as u64).try_into().unwrap(), self.get_occupancies()) & !self.get_color(self.side);
+                    
+                    while attacks > 0 {
+                        target = attacks.index_of_lsb().unwrap() as i32;
+
+                        // quiet move
+                        if !get_bit!(self.get_color(!self.side), target) {
+                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        } else {
+                            // capture move
+                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        }
+
+                        
+
+                        attacks.pop_lsb();
+                    } 
+                    bitboard.pop_lsb();
+                }
+            }
+
             // queen
-            
+            if piece == (Piece::Queen as usize) {
+                while bitboard > 0 {
+                    source = bitboard.index_of_lsb().unwrap() as i32;
+                    attacks = self.attack_tables.sliders.get_queen_attack((source as u64).try_into().unwrap(), self.get_occupancies()) & !self.get_color(self.side);
+                    
+                    while attacks > 0 {
+                        target = attacks.index_of_lsb().unwrap() as i32;
+
+                        // quiet move
+                        if !get_bit!(self.get_color(!self.side), target) {
+                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        } else {
+                            // capture move
+                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        }
+
+                        
+
+                        attacks.pop_lsb();
+                    } 
+                    bitboard.pop_lsb();
+                }
+            }
+
             // king
+            if piece == (Piece::King as usize) {
+                while bitboard > 0 {
+                    source = bitboard.index_of_lsb().unwrap() as i32;
+                    attacks = self.attack_tables.kings.king_attacks[source as usize] & !self.get_color(self.side);
+                    
+                    while attacks > 0 {
+                        target = attacks.index_of_lsb().unwrap() as i32;
+
+                        // quiet move
+                        if !get_bit!(self.get_color(!self.side), target) {
+                            println!("piece quiet move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        } else {
+                            // capture move
+                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
+                        }
+
+                        
+
+                        attacks.pop_lsb();
+                    } 
+                    bitboard.pop_lsb();
+                }
+            }
         }
     }
 }

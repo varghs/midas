@@ -1,5 +1,5 @@
 use super::{bitboard::{Bitboard, print_bitboard}, attacks::AttackTables};
-use std::convert::TryFrom;
+use std::{convert::TryFrom, ops::Not};
 use std::fmt::Display;
 use crate::engine::square::Square;
 use super::fen::FEN;
@@ -77,6 +77,16 @@ impl Display for Color {
             Color::Black => output += "Black",
         }
         write!(f, "{}", output)
+    }
+}
+
+impl Not for Color {
+    type Output = Self;
+    fn not(self) -> Self::Output {
+        match self {
+            Self::White => Self::Black,
+            Self::Black => Self::White,
+        }
     }
 }
 
@@ -282,7 +292,7 @@ impl Board {
         }
 
         // attacked by black pawns 
-        if side == Color::Black && (self.attack_tables.pawns.pawn_attacks[Color::White as usize][square as usize] & self.get_piece_of_color(Piece::Pawn, Color::White) > 0) {
+        if side == Color::Black && (self.attack_tables.pawns.pawn_attacks[Color::White as usize][square as usize] & self.get_piece_of_color(Piece::Pawn, Color::Black) > 0) {
             return true;
         }
 
