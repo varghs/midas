@@ -1,4 +1,4 @@
-use super::{bitboard::{Bitboard, print_bitboard}, attacks::AttackTables};
+use super::{bitboard::{Bitboard, print_bitboard}, attacks::AttackTables, r#move::MoveList};
 use std::{convert::TryFrom, ops::Not};
 use std::fmt::Display;
 use crate::engine::square::Square;
@@ -155,6 +155,7 @@ pub struct Board {
     pub en_passant_sq: Option<Square>,
     pub castle: CastleRep,
     pub attack_tables: AttackTables,
+    pub move_list: MoveList,
 }
 
 impl Board {
@@ -170,6 +171,7 @@ impl Board {
 
         let side = Color::White;
         let en_passant_sq: Option<Square> = Some(Square::e3);
+        let move_list = MoveList::new();
 
         let mut attack_tables = AttackTables::new();
         attack_tables.populate();
@@ -181,6 +183,7 @@ impl Board {
             castle: CastleRep::default(),
             en_passant_sq,
             attack_tables,
+            move_list,
         }
     }
 
