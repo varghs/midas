@@ -10,6 +10,7 @@ use midas::{
         move_gen::*,
         perft::{perft_driver, perft_tester},
         r#move::{Move, MoveList, MoveType},
+        uci::parse_move_string,
     },
     set_bit,
 };
@@ -33,8 +34,11 @@ fn main() {
 
             b.board.parse_fen(fen);
 
-            let mut nodes: u64 = 0;
-            perft_tester(&mut b, &mut nodes, 3);
+            parse_move_string("e2e4");
+            parse_move_string("a1d2");
+
+            // let mut nodes: u64 = 0;
+            // perft_tester(&mut b, &mut nodes, 3);
         })
         .unwrap()
         .join()

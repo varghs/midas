@@ -6,3 +6,4 @@ pub mod r#move;
 pub mod move_gen;
 pub mod perft;
 pub mod square;
+pub mod uci;
