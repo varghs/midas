@@ -3,13 +3,14 @@ use crate::{engine::r#move::Move, get_bit};
 use super::{
     bitboard::{Bitboard, LS1B, ONE},
     board::{Board, Castle, Color, Piece},
-    square::{Square, ASCII_SQUARE},
+    square::{Square, ASCII_SQUARE}, r#move::MoveList,
 };
 
 impl Board {
     // changes the Board's move list to the current position
-    pub fn generate_moves(&mut self) {
-        self.move_list.count = 0;
+    pub fn generate_moves(&mut self) -> MoveList {
+        let mut move_list = MoveList::new();
+        move_list.count = 0;
         let (mut source, mut target): (i32, i32);
         let (mut bitboard, mut attacks): (Bitboard, Bitboard);
 
@@ -30,7 +31,7 @@ impl Board {
                             {
                                 //
                                 if source >= Square::a7 as i32 && source <= Square::h7 as i32 {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -42,7 +43,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -54,7 +55,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -66,7 +67,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -79,7 +80,7 @@ impl Board {
                                         false,
                                     ));
                                 } else {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -94,7 +95,7 @@ impl Board {
                                     if (source >= Square::a2 as i32 && source <= Square::h2 as i32)
                                         && !(get_bit!(self.get_occupancies(), target + 8))
                                     {
-                                        self.move_list.add_move(Move::new(
+                                        move_list.add_move(Move::new(
                                             (source as u64).try_into().unwrap(),
                                             ((target + 8) as u64).try_into().unwrap(),
                                             Piece::Pawn,
@@ -119,7 +120,7 @@ impl Board {
                                 target = attacks.index_of_lsb().unwrap() as i32;
 
                                 if source >= Square::a7 as i32 && source <= Square::h7 as i32 {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -131,7 +132,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -143,7 +144,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -155,7 +156,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -168,7 +169,7 @@ impl Board {
                                         false,
                                     ));
                                 } else {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -194,7 +195,7 @@ impl Board {
                                 if en_passant_attacks > 0 {
                                     let target_en_passant =
                                         en_passant_attacks.index_of_lsb().unwrap();
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target_en_passant as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -223,7 +224,7 @@ impl Board {
                                 if !self.is_square_attacked(Square::e1, Color::Black)
                                     && !self.is_square_attacked(Square::f1, Color::Black)
                                 {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         Square::e1,
                                         Square::g1,
                                         Piece::King,
@@ -248,7 +249,7 @@ impl Board {
                                 if !self.is_square_attacked(Square::e1, Color::Black)
                                     && !self.is_square_attacked(Square::d1, Color::Black)
                                 {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         Square::e1,
                                         Square::c1,
                                         Piece::King,
@@ -277,7 +278,7 @@ impl Board {
                             {
                                 //
                                 if source >= Square::a2 as i32 && source <= Square::h2 as i32 {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -289,7 +290,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -301,7 +302,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -313,7 +314,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -326,7 +327,7 @@ impl Board {
                                         false,
                                     ));
                                 } else {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -341,7 +342,7 @@ impl Board {
                                     if (source >= Square::a7 as i32 && source <= Square::h7 as i32)
                                         && !(get_bit!(self.get_occupancies(), target - 8))
                                     {
-                                        self.move_list.add_move(Move::new(
+                                        move_list.add_move(Move::new(
                                             (source as u64).try_into().unwrap(),
                                             ((target - 8) as u64).try_into().unwrap(),
                                             Piece::Pawn,
@@ -366,7 +367,7 @@ impl Board {
                                 target = attacks.index_of_lsb().unwrap() as i32;
 
                                 if source >= Square::a2 as i32 && source <= Square::h2 as i32 {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -378,7 +379,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -390,7 +391,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -402,7 +403,7 @@ impl Board {
                                         false,
                                         false,
                                     ));
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -415,7 +416,7 @@ impl Board {
                                         false,
                                     ));
                                 } else {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -441,7 +442,7 @@ impl Board {
                                 if en_passant_attacks > 0 {
                                     let target_en_passant =
                                         en_passant_attacks.index_of_lsb().unwrap();
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         (source as u64).try_into().unwrap(),
                                         (target_en_passant as u64).try_into().unwrap(),
                                         Piece::Pawn,
@@ -469,7 +470,7 @@ impl Board {
                                 if !self.is_square_attacked(Square::e8, Color::White)
                                     && !self.is_square_attacked(Square::f8, Color::White)
                                 {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         Square::e8,
                                         Square::g8,
                                         Piece::King,
@@ -494,7 +495,7 @@ impl Board {
                                 if !self.is_square_attacked(Square::e8, Color::White)
                                     && !self.is_square_attacked(Square::d8, Color::White)
                                 {
-                                    self.move_list.add_move(Move::new(
+                                    move_list.add_move(Move::new(
                                         Square::e8,
                                         Square::c8,
                                         Piece::King,
@@ -525,7 +526,7 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::Knight,
@@ -539,7 +540,7 @@ impl Board {
                             ));
                         } else {
                             // capture move
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::Knight,
@@ -573,7 +574,7 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::Bishop,
@@ -587,7 +588,7 @@ impl Board {
                             ));
                         } else {
                             // capture move
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::Bishop,
@@ -621,7 +622,7 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::Rook,
@@ -635,7 +636,7 @@ impl Board {
                             ));
                         } else {
                             // capture move
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::Rook,
@@ -669,7 +670,7 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::Queen,
@@ -683,7 +684,7 @@ impl Board {
                             ));
                         } else {
                             // capture move
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::Queen,
@@ -715,7 +716,7 @@ impl Board {
 
                         // quiet move
                         if !get_bit!(self.get_color(!self.side), target) {
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::King,
@@ -729,7 +730,7 @@ impl Board {
                             ));
                         } else {
                             // capture move
-                            self.move_list.add_move(Move::new(
+                            move_list.add_move(Move::new(
                                 (source as u64).try_into().unwrap(),
                                 (target as u64).try_into().unwrap(),
                                 Piece::King,
@@ -749,5 +750,6 @@ impl Board {
                 }
             }
         }
+        move_list
     }
 }
