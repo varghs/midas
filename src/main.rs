@@ -29,10 +29,10 @@ fn main() {
         .spawn(|| {
             let mut b = BoardState::new();
             // let mut buf = String::new();
-            let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
+            let fen = FEN("r3k2r/p1ppRpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
+            let mut inp = String::new();
 
-            b.board.parse_fen(START_POSITION);
-            println!("{}", b.board);
+            b.board.parse_fen(fen);
 
             parse_move_string("e2e4");
             parse_move_string("a1d2");

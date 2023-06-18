@@ -73,25 +73,6 @@ const INDEX_64_KIM: [u64; 64] = [
     39, 14, 33, 19, 30, 9, 24, 13, 18, 8, 12, 7, 6, 5, 63,
 ];
 
-pub fn print_attacked_squares(board: &Board, side: Color) {
-    for rank in 0..8_usize {
-        for file in 0..8_usize {
-            let square: Square = (rank * 8 + file).try_into().unwrap();
-            if file == 0 {
-                print!("  {} ", 8 - rank);
-            }
-
-            if board.is_square_attacked(square, side) {
-                print!("1 ");
-            } else {
-                print!("0 ");
-            }
-        }
-        println!();
-    }
-    println!("    a b c d e f g h")
-}
-
 pub trait LS1B {
     fn index_of_lsb(&self) -> Option<Square>;
     fn pop_lsb(&mut self) -> Option<Square>;

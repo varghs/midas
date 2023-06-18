@@ -1,5 +1,6 @@
 use std::fmt::Display;
 
+use crate::engine::bitboard::LS1B;
 use crate::engine::bitboard::print_bitboard;
 use crate::get_bit;
 use crate::pop_bit;
@@ -184,7 +185,8 @@ impl Display for MoveList {
 }
 
 impl BoardState {
-    pub fn make_move(&mut self, m: Move, move_flag: MoveType) {
+    // returns if move is legal
+    pub fn make_move(&mut self, m: Move, move_flag: MoveType) -> bool {
         // quiet move
         if move_flag == MoveType::AllMoves {
             self.preserve();
@@ -211,7 +213,6 @@ impl BoardState {
                     ) {
                         pop_bit!(self.board.boards[p], target);
                         pop_bit!(self.board.boards[(!self.board.side) as usize], target);
-                        break;
                     }
                 }
             }
@@ -296,14 +297,24 @@ impl BoardState {
             // update castling rights
             self.board.castle.0 &= CASTLING_RIGHTS[source as usize];
             self.board.castle.0 &= CASTLING_RIGHTS[target as usize];
+
+            self.board.side = !self.board.side;
+
+            let square = self.board.get_piece_of_color(Piece::King, !self.board.side).index_of_lsb();
+            if self.board.is_square_attacked(square.unwrap(), self.board.side) {
+                self.restore();
+                return false;
+            } else {
+                return true;
+            }
         } else {
             // capture
             // make sure move is capture
             if m.capture() {
-                self.make_move(m, MoveType::AllMoves);
+                return self.make_move(m, MoveType::AllMoves)
             } else {
                 // don't make move
-                return;
+                return false;
             }
         }
     }
