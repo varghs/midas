@@ -30,7 +30,7 @@ fn main() {
             let mut buf = String::new();
             let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
 
-            b.board.parse_fen(fen);
+            b.board.parse_fen(TRICKY_POSITION);
             println!("{}", b.board);
             b.board.generate_moves();
 

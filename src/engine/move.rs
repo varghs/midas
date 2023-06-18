@@ -196,6 +196,41 @@ impl BoardState {
                     Color::Black => self.board.en_passant_sq = Some((target as u64 + 8).try_into().unwrap()),
                 }
             }
+
+            // handle castles
+            if castling {
+                match target {
+                    // white kingside
+                    Square::g1 => {
+                        pop_bit!(self.board.boards[Piece::Rook as usize], Square::h1);
+                        pop_bit!(self.board.boards[Color::White as usize], Square::h1);
+                        set_bit!(self.board.boards[Piece::Rook as usize], Square::f1);
+                        set_bit!(self.board.boards[Color::White as usize], Square::f1);
+                    },
+                    // white queenside
+                    Square::c1 => {
+                        pop_bit!(self.board.boards[Piece::Rook as usize], Square::a1);
+                        pop_bit!(self.board.boards[Color::White as usize], Square::a1);
+                        set_bit!(self.board.boards[Piece::Rook as usize], Square::d1);
+                        set_bit!(self.board.boards[Color::White as usize], Square::d1);
+                    },
+                    // black kingside
+                    Square::g8 => {
+                        pop_bit!(self.board.boards[Piece::Rook as usize], Square::h8);
+                        pop_bit!(self.board.boards[Color::White as usize], Square::h8);
+                        set_bit!(self.board.boards[Piece::Rook as usize], Square::f8);
+                        set_bit!(self.board.boards[Color::White as usize], Square::f8);
+                    },
+                    // black queenside
+                    Square::c8 => {
+                        pop_bit!(self.board.boards[Piece::Rook as usize], Square::a8);
+                        pop_bit!(self.board.boards[Color::White as usize], Square::a8);
+                        set_bit!(self.board.boards[Piece::Rook as usize], Square::d8);
+                        set_bit!(self.board.boards[Color::White as usize], Square::d8);
+                    },
+                    _ => panic!("I don't know how it got here, and I don't wanna know how it got here.")
+                }
+            }
         } else { // capture
             // make sure move is capture
             if m.capture() {
