@@ -5,7 +5,7 @@ use super::{
     r#move::{MoveList, MoveType},
 };
 
-pub fn perft_driver(mut board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
+pub fn perft_driver(board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
     // perft driver
 
     if depth == 0 {
@@ -14,14 +14,17 @@ pub fn perft_driver(mut board_state: &mut BoardState, nodes: &mut u64, depth: u1
     }
 
     // let copy_board_state = board_state.clone();
-    board_state.board.generate_moves();
-    for m in (&board_state.board.move_list.moves[..board_state.board.move_list.count]).to_vec() {
+    let move_list = board_state.board.generate_moves();
+    for m in (&move_list.moves[..move_list.count]).to_vec() {
         // preserve the state so u can later restore it
         board_state.preserve();
-        board_state.make_move(m, MoveType::AllMoves);
+
+        if !board_state.make_move(m, MoveType::AllMoves) {
+            continue;
+        }
 
         // call perft recursively
-        perft_driver(&mut board_state, nodes, depth - 1);
+        perft_driver(board_state, nodes, depth - 1);
         board_state.restore();
     }
 }
@@ -35,24 +38,26 @@ pub fn perft_tester(board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
         return;
     }
 
-    let mut copy_board_state = board_state.clone();
-    copy_board_state.board.generate_moves();
+    let move_list = board_state.board.generate_moves();
 
     for m in
-        (&copy_board_state.board.move_list.moves[..copy_board_state.board.move_list.count]).to_vec()
+        (&move_list.moves[..move_list.count]).to_vec()
     {
         // preserve the state so u can later restore it
-        copy_board_state.preserve();
-        copy_board_state.make_move(m, MoveType::AllMoves);
+        board_state.preserve();
+        
+        if !board_state.make_move(m, MoveType::AllMoves) {
+            continue;
+        }
 
-        let cummalitive_nodes = nodes.clone();
+        let cumulative_nodes = nodes.clone();
 
         // call perft recursively
-        perft_driver(&mut copy_board_state, nodes, depth - 1);
+        perft_driver(board_state, nodes, depth - 1);
 
-        let old_nodes: u64 = *nodes - cummalitive_nodes;
+        let old_nodes: u64 = *nodes - cumulative_nodes;
 
-        copy_board_state.restore();
+        board_state.restore();
 
         println!("\tmove {}\t\t nodes: {}", m, old_nodes);
     }

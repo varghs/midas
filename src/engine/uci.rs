@@ -1,6 +1,10 @@
-use super::{r#move::Move, square::Square};
+use crate::engine::board::Piece;
 
-pub fn parse_move_string(move_string: &str) -> Move {
+use super::{board::BoardState, r#move::Move, square::Square};
+
+pub fn parse_move_string(board_state: &mut BoardState, move_string: &str) -> Move {
+    let mut move_list = board_state.board.generate_moves();
+
     // TODO
     // create an instance of move_list
     // loop through all moves..
@@ -23,6 +27,29 @@ pub fn parse_move_string(move_string: &str) -> Move {
         "move_string: {}, source: {}, target: {}",
         move_string, source_square, target_square
     );
+
+    // loop over all the moves in the move_list
+    for m in (&move_list.moves[..move_list.count]).to_vec() {
+        // make sure source/target squares are actually valid
+        if source_square == m.get_source() && target_square == m.get_target() {
+            if let Some(promoted_piece) = m.get_promoted_piece() {
+                let promoted_char = move_string.chars().nth(4).unwrap_or('a');
+                // promoted to queen
+                if promoted_piece == Piece::Queen && promoted_char == 'q' {
+                    return m;
+                }
+                if promoted_piece == Piece::Rook && promoted_char == 'q' {
+                    return m;
+                }
+                if promoted_piece == Piece::Bishop && promoted_char == 'q' {
+                    return m;
+                }
+                if promoted_piece == Piece::Knight && promoted_char == 'q' {
+                    return m;
+                }
+            }
+        }
+    }
 
     // Illegal
     return Move::default();
