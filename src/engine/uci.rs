@@ -123,7 +123,7 @@ impl Board {
     pub fn parse_go(&mut self, go_command: &str) {
         let parts: Vec<&str> = go_command.trim().split_whitespace().collect();
 
-        if parts.len() != 3 || parts[0] != "go" || parts[1] != "depth" {
+        if parts.len() != 3 {
             println!("depth: 6");
         }
 
