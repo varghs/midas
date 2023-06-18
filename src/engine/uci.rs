@@ -125,6 +125,7 @@ impl Board {
 
         if parts.len() != 3 {
             println!("depth: 6");
+            return;
         }
 
         match parts[2].parse::<i32>() {
