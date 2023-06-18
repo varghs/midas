@@ -217,16 +217,16 @@ impl BoardState {
                     // black kingside
                     Square::g8 => {
                         pop_bit!(self.board.boards[Piece::Rook as usize], Square::h8);
-                        pop_bit!(self.board.boards[Color::White as usize], Square::h8);
+                        pop_bit!(self.board.boards[Color::Black as usize], Square::h8);
                         set_bit!(self.board.boards[Piece::Rook as usize], Square::f8);
-                        set_bit!(self.board.boards[Color::White as usize], Square::f8);
+                        set_bit!(self.board.boards[Color::Black as usize], Square::f8);
                     },
                     // black queenside
                     Square::c8 => {
                         pop_bit!(self.board.boards[Piece::Rook as usize], Square::a8);
-                        pop_bit!(self.board.boards[Color::White as usize], Square::a8);
+                        pop_bit!(self.board.boards[Color::Black as usize], Square::a8);
                         set_bit!(self.board.boards[Piece::Rook as usize], Square::d8);
-                        set_bit!(self.board.boards[Color::White as usize], Square::d8);
+                        set_bit!(self.board.boards[Color::Black as usize], Square::d8);
                     },
                     _ => panic!("I don't know how it got here, and I don't wanna know how it got here.")
                 }
