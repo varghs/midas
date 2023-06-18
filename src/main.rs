@@ -34,7 +34,7 @@ fn main() {
             println!("{}", b.board);
 
             let mut nodes: u64 = 0;
-            perft_tester(&mut b, &mut nodes, 2);
+            perft_tester(&mut b, &mut nodes, 3);
         })
         .unwrap()
         .join()

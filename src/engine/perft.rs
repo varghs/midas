@@ -5,7 +5,7 @@ use super::{
     r#move::{MoveList, MoveType},
 };
 
-pub fn perft_driver(board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
+pub fn perft_driver(mut board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
     // perft driver
 
     if depth == 0 {
@@ -13,18 +13,16 @@ pub fn perft_driver(board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
         return;
     }
 
-    let mut copy_board_state = board_state.clone();
-    copy_board_state.board.generate_moves();
-    for m in
-        (&copy_board_state.board.move_list.moves[..copy_board_state.board.move_list.count]).to_vec()
-    {
+    // let copy_board_state = board_state.clone();
+    board_state.board.generate_moves();
+    for m in (&board_state.board.move_list.moves[..board_state.board.move_list.count]).to_vec() {
         // preserve the state so u can later restore it
-        copy_board_state.preserve();
-        copy_board_state.make_move(m, MoveType::AllMoves);
+        board_state.preserve();
+        board_state.make_move(m, MoveType::AllMoves);
 
         // call perft recursively
-        perft_driver(&mut copy_board_state, nodes, depth - 1);
-        copy_board_state.restore();
+        perft_driver(&mut board_state, nodes, depth - 1);
+        board_state.restore();
     }
 }
 
