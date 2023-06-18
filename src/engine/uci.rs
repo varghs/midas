@@ -13,17 +13,18 @@ impl BoardState {
         // parse source_square using some fancy ASCII isnt that kewl!?
         let source_square: Square = ((move_string.chars().nth(0).expect("UHHH BAD MOVE") as usize
             - 'a' as usize)
-            + (move_string.chars().nth(1).expect("UHHH BAD MOVE LOL") as usize - '0' as usize - 1) * 8)
-            .try_into()
-            .expect("how did usize not turn into square?");
-
+            + (move_string.chars().nth(1).expect("UHHH BAD MOVE LOL") as usize - '0' as usize - 1)
+                * 8)
+        .try_into()
+        .expect("how did usize not turn into square?");
 
         // parse target_square using some fancy ASCII isnt that kewl!?
         let target_square: Square = ((move_string.chars().nth(2).expect("UHHH BAD MOVE") as usize
             - 'a' as usize)
-            + (move_string.chars().nth(3).expect("UHHH BAD MOVE LOL") as usize - '0' as usize - 1) * 8)
-            .try_into()
-            .expect("how did usize not turn into square?");
+            + (move_string.chars().nth(3).expect("UHHH BAD MOVE LOL") as usize - '0' as usize - 1)
+                * 8)
+        .try_into()
+        .expect("how did usize not turn into square?");
 
         // loop over all the moves in the move_list
         for m in (&move_list.moves[..move_list.count]).to_vec() {
@@ -92,6 +93,25 @@ impl BoardState {
 
                 self.make_move(m.unwrap(), MoveType::AllMoves);
             }
+        }
+    }
+
+    // go depth x
+    // 0123456789
+    pub fn parse_go(&mut self, go_command: &str) {
+        let parts: Vec<&str> = go_command.trim().split_whitespace().collect();
+
+        if parts.len() != 3 {
+            println!("depth: {}", 6);
+            return;
+        }
+
+        match parts[2].parse::<i32>() {
+            Ok(depth) => {
+                // TODO search_position(depth);
+                println!("depth: {}", depth);
+            }
+            Err(_) => return,
         }
     }
 }
