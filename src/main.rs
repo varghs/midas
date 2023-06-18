@@ -46,9 +46,7 @@ fn main() {
                 println!("illegal move!");
             }
 
-            b.board.parse_go("go depth 634");
-            b.board.parse_go("go depth 3");
-            b.board.parse_go("go depth 12356623");
+            b.board.uci_loop();
         })
         .unwrap()
         .join()
