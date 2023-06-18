@@ -1,8 +1,11 @@
-use super::bitboard::{print_bitboard, Bitboard, EMPTY};
-use super::fen::FEN;
+use super::{
+    attacks::AttackTables,
+    bitboard::{print_bitboard, Bitboard},
+    r#move::MoveList,
+};
 use crate::engine::square::Square;
-use std::convert::TryFrom;
 use std::fmt::Display;
+use std::{convert::TryFrom, ops::Not};
 
 use crate::{get_bit, set_bit};
 
@@ -80,6 +83,16 @@ impl Display for Color {
     }
 }
 
+impl Not for Color {
+    type Output = Self;
+    fn not(self) -> Self::Output {
+        match self {
+            Self::White => Self::Black,
+            Self::Black => Self::White,
+        }
+    }
+}
+
 #[derive(Clone, Copy)]
 pub enum Castle {
     WhiteKing = 1,
@@ -88,10 +101,11 @@ pub enum Castle {
     BlackQueen = 8,
 }
 
-pub struct CastleRep(u8);
+#[derive(Clone, Copy)]
+pub struct CastleRep(pub u8);
 
 impl CastleRep {
-    pub fn new() -> Self {
+    pub fn default() -> Self {
         Self(0xF)
     }
     pub fn can_castle(&self, castle: Castle) -> bool {
@@ -143,9 +157,10 @@ impl Display for CastleRep {
 pub struct Board {
     pub boards: [Bitboard; 8],
     pub side: Color,
-    pub occupancies: [Bitboard; 3],
     pub en_passant_sq: Option<Square>,
     pub castle: CastleRep,
+    pub attack_tables: AttackTables,
+    pub move_list: MoveList,
 }
 
 impl Board {
@@ -161,15 +176,19 @@ impl Board {
 
         let side = Color::White;
         let en_passant_sq: Option<Square> = Some(Square::e3);
-        let occupancies = [EMPTY; 3];
+        let move_list = MoveList::new();
+
+        let mut attack_tables = AttackTables::new();
+        attack_tables.populate();
 
         let boards: [Bitboard; 8] = [white, black, pawns, rooks, knights, bishops, queens, kings];
         Board {
             boards,
             side,
-            occupancies,
-            castle: CastleRep::new(),
+            castle: CastleRep::default(),
             en_passant_sq,
+            attack_tables,
+            move_list,
         }
     }
 
@@ -186,93 +205,84 @@ impl Board {
         self.boards[c as usize]
     }
 
+    pub fn get_occupancies(&self) -> Bitboard {
+        self.get_color(Color::White) | self.get_color(Color::Black)
+    }
+
     pub fn get_piece_of_color(&self, p: Piece, c: Color) -> Bitboard {
         self.get_piece(p) & self.get_color(c)
     }
 
-    pub fn parse_fen(&mut self, fen: FEN) {
-        self.boards.fill(0);
-        self.side = Color::White;
-        self.en_passant_sq = None;
-        self.castle = CastleRep(0);
-
-        let mut fen_iter = fen.0.chars();
-
-        let mut break_condition = false;
-
-        let mut rank: i32 = 7;
-        let mut file: i32 = 0;
-
-        while rank >= 0 {
-            while file < 8 {
-                let square = rank * 8 + file;
-                let char = fen_iter.next().unwrap();
-                if char >= 'a' && char <= 'z' {
-                    let piece: Piece = char.try_into().unwrap_or(Piece::Pawn);
-                    set_bit!(self.boards[piece as usize], square);
-                    set_bit!(self.boards[Color::Black as usize], square);
-                    file += 1;
-                } else if char >= 'A' && char <= 'Z' {
-                    let piece: Piece = char.try_into().unwrap_or(Piece::Pawn);
-                    set_bit!(self.boards[piece as usize], square);
-                    set_bit!(self.boards[Color::White as usize], square);
-                    file += 1;
-                } else if char >= '0' && char <= '9' {
-                    let offset = (char as i32) - ('0' as i32);
-                    file += offset;
-                } else if char == '/' {
-                } else {
-                    break_condition = true;
-                    break;
-                }
-                println!("{}", char);
-            }
-            rank -= 1;
-            file = 0;
-            println!("{}", rank);
-            if break_condition {
-                break;
-            }
-        }
-        fen_iter.next();
-        match fen_iter.next() {
-            Some('w') => self.side = Color::White,
-            Some('b') => self.side = Color::Black,
-            _ => panic!("Invalid side in FEN."),
+    pub fn is_square_attacked(&self, square: Square, side: Color) -> bool {
+        // attacked by white pawns
+        if side == Color::White
+            && (self.attack_tables.pawns.pawn_attacks[Color::Black as usize][square as usize]
+                & self.get_piece_of_color(Piece::Pawn, Color::White)
+                > 0)
+        {
+            return true;
         }
 
-        fen_iter.next();
-        let mut char = fen_iter.next().unwrap();
-        while char != ' ' {
-            println!("{}", char);
-            match char {
-                'K' => self.castle.set_castle(Castle::WhiteKing),
-                'Q' => self.castle.set_castle(Castle::WhiteQueen),
-                'k' => self.castle.set_castle(Castle::BlackKing),
-                'q' => self.castle.set_castle(Castle::BlackQueen),
-                '-' => {}
-                _ => panic!("Invalid castling in FEN."),
-            }
-            char = fen_iter.next().unwrap();
+        // attacked by black pawns
+        if side == Color::Black
+            && (self.attack_tables.pawns.pawn_attacks[Color::White as usize][square as usize]
+                & self.get_piece_of_color(Piece::Pawn, Color::Black)
+                > 0)
+        {
+            return true;
         }
 
-        char = fen_iter.next().unwrap();
-        let mut sq = String::new();
-        if char != '-' {
-            sq.push(char);
-            sq.push(fen_iter.next().unwrap());
-            self.en_passant_sq = Some(sq.as_str().try_into().unwrap());
-        } else {
-            self.en_passant_sq = None;
+        // attacked by knight
+        if self.attack_tables.knights.knight_attacks[square as usize]
+            & self.get_piece_of_color(Piece::Knight, side)
+            > 0
+        {
+            return true;
         }
 
-        self.occupancies[Color::White as usize] |=
-            self.boards[Piece::Pawn as usize] & self.boards[Color::White as usize];
-        // todo the other occupancies
+        // attacked by bishop
+        if (self
+            .attack_tables
+            .sliders
+            .bishops
+            .get_bishop_attack(square, self.get_occupancies())
+            & self.get_piece_of_color(Piece::Bishop, side))
+            > 0
+        {
+            return true;
+        }
 
-        println!("{}", fen_iter.as_str());
+        // attacked by rook
+        if (self
+            .attack_tables
+            .sliders
+            .rooks
+            .get_rook_attack(square, self.get_occupancies())
+            & self.get_piece_of_color(Piece::Rook, side))
+            > 0
+        {
+            return true;
+        }
 
-        // todo: half move clock and fullmove counter
+        // attacked by queen
+        if (self
+            .attack_tables
+            .sliders
+            .get_queen_attack(square, self.get_occupancies())
+            & self.get_piece_of_color(Piece::Queen, side))
+            > 0
+        {
+            return true;
+        }
+        // attacked by king
+        if self.attack_tables.kings.king_attacks[square as usize]
+            & self.get_piece_of_color(Piece::King, side)
+            > 0
+        {
+            return true;
+        }
+
+        false
     }
 }
 
@@ -329,5 +339,43 @@ impl Display for Board {
         output += format!("Castling: {}", self.castle).as_str();
 
         write!(f, "{}", output)
+    }
+}
+
+pub struct BoardState {
+    pub board: Board,
+    pub boards_copy: [Bitboard; 8],
+    pub side_copy: Color,
+    pub en_passant_sq_copy: Option<Square>,
+    pub castle_copy: CastleRep,
+}
+
+impl BoardState {
+    pub fn new() -> Self {
+        let board = Board::new();
+        let mut ret = Self {
+            board,
+            boards_copy: [0; 8],
+            side_copy: Color::White,
+            en_passant_sq_copy: None,
+            castle_copy: CastleRep(0),
+        };
+        ret.preserve();
+        ret
+    }
+
+    pub fn preserve(&mut self) {
+        self.boards_copy = [0; 8];
+        self.boards_copy.copy_from_slice(&self.board.boards[..]);
+        self.side_copy = self.board.side;
+        self.en_passant_sq_copy = self.board.en_passant_sq;
+        self.castle_copy = self.board.castle;
+    }
+
+    pub fn restore(&mut self) {
+        self.board.boards.copy_from_slice(&self.boards_copy[..]);
+        self.board.side = self.side_copy;
+        self.board.en_passant_sq = self.en_passant_sq_copy;
+        self.board.castle = self.castle_copy;
     }
 }
