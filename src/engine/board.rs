@@ -343,6 +343,9 @@ impl Display for Board {
 #[derive(Clone)]
 pub struct BoardState {
     pub board: Board,
+}
+
+pub struct BoardCopy {
     pub boards_copy: [Bitboard; 8],
     pub side_copy: Color,
     pub en_passant_sq_copy: Option<Square>,
@@ -352,29 +355,25 @@ pub struct BoardState {
 impl BoardState {
     pub fn new() -> Self {
         let board = Board::new();
-        let mut ret = Self {
-            board,
-            boards_copy: [0; 8],
-            side_copy: Color::White,
-            en_passant_sq_copy: None,
-            castle_copy: CastleRep(0),
+        let ret = Self {
+            board
         };
-        ret.preserve();
         ret
     }
 
-    pub fn preserve(&mut self) {
-        self.boards_copy = [0; 8];
-        self.boards_copy.copy_from_slice(&self.board.boards[..]);
-        self.side_copy = self.board.side;
-        self.en_passant_sq_copy = self.board.en_passant_sq;
-        self.castle_copy = self.board.castle;
+    pub fn preserve(&mut self) -> BoardCopy {
+        let mut boards_copy = [0; 8];
+        boards_copy.copy_from_slice(&self.board.boards[..]);
+        let side_copy = self.board.side;
+        let en_passant_sq_copy = self.board.en_passant_sq;
+        let castle_copy = self.board.castle;
+        BoardCopy { boards_copy, side_copy, en_passant_sq_copy, castle_copy }
     }
 
-    pub fn restore(&mut self) {
-        self.board.boards.copy_from_slice(&self.boards_copy[..]);
-        self.board.side = self.side_copy;
-        self.board.en_passant_sq = self.en_passant_sq_copy;
-        self.board.castle = self.castle_copy;
+    pub fn restore(&mut self, copy: BoardCopy) {
+        self.board.boards.copy_from_slice(&copy.boards_copy[..]);
+        self.board.side = copy.side_copy;
+        self.board.en_passant_sq = copy.en_passant_sq_copy;
+        self.board.castle = copy.castle_copy;
     }
 }

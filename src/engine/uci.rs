@@ -3,7 +3,7 @@ use crate::engine::board::Piece;
 use super::{board::BoardState, r#move::Move, square::Square};
 
 pub fn parse_move_string(board_state: &mut BoardState, move_string: &str) -> Move {
-    let mut move_list = board_state.board.generate_moves();
+    let move_list = board_state.board.generate_moves();
 
     // TODO
     // create an instance of move_list
@@ -23,10 +23,10 @@ pub fn parse_move_string(board_state: &mut BoardState, move_string: &str) -> Mov
         .try_into()
         .expect("how did usize not turn into square?");
 
-    println!(
-        "move_string: {}, source: {}, target: {}",
-        move_string, source_square, target_square
-    );
+    // println!(
+    //     "move_string: {}, source: {}, target: {}",
+    //     move_string, source_square, target_square
+    // );
 
     // loop over all the moves in the move_list
     for m in (&move_list.moves[..move_list.count]).to_vec() {
