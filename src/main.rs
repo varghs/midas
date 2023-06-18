@@ -29,8 +29,9 @@ fn main() {
         .spawn(|| {
             let mut b = BoardState::new();
             let debug = true;
+            let fen = FEN("rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1 ");
             if debug {
-                b.board.parse_fen(KILLER_POSITION);
+                b.board.parse_fen(fen);
                 println!("{}", b.board);
                 println!("{}", b.evaluate());
             } else {
