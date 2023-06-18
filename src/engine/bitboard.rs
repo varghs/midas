@@ -73,7 +73,7 @@ const INDEX_64_KIM: [u64; 64] = [
     39, 14, 33, 19, 30, 9, 24, 13, 18, 8, 12, 7, 6, 5, 63,
 ];
 
-pub fn print_attacked_squares(board: &Board, attack_tables: &AttackTables, side: Color) {
+pub fn print_attacked_squares(board: &Board, side: Color) {
     for rank in 0..8_usize {
         for file in 0..8_usize {
             let square: Square = (rank * 8 + file).try_into().unwrap();
@@ -81,7 +81,7 @@ pub fn print_attacked_squares(board: &Board, attack_tables: &AttackTables, side:
                 print!("  {} ", 8 - rank);
             }
 
-            if is_square_attacked(board, attack_tables, square, side) {
+            if board.is_square_attacked(square, side) {
                 print!("1 ");
             } else {
                 print!("0 ");
@@ -90,49 +90,6 @@ pub fn print_attacked_squares(board: &Board, attack_tables: &AttackTables, side:
         println!();
     }
     println!("    a b c d e f g h")
-}
-
-pub fn is_square_attacked(
-    board: &Board,
-    attack_tables: &AttackTables,
-    square: Square,
-    side: Color,
-) -> bool {
-    let square_index = square as usize;
-
-    // White pawns
-    if side == Color::White
-        && attack_tables.pawns.pawn_attacks[Color::Black as usize][square_index]
-            & board.boards[Piece::Pawn as usize]
-            & board.boards[Color::Black as usize]
-            != 0
-    {
-        return true;
-    }
-    // Black pawns
-    if side == Color::Black
-        && attack_tables.pawns.pawn_attacks[Color::White as usize][square_index]
-            & board.boards[Piece::Pawn as usize]
-            & board.boards[Color::White as usize]
-            != 0
-    {
-        return true;
-    }
-
-    // Knights
-    if attack_tables.knights.knight_attacks[square_index]
-        & board.boards[Piece::Knight as usize]
-        & board.boards[side as usize]
-        != 0
-    {
-        return true;
-    }
-
-    // Bishops
-    // if attack_tables.sliders.bishops.get_bishop_attack(square,
-
-    // default
-    return false;
 }
 
 pub trait LS1B {
