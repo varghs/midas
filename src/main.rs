@@ -10,7 +10,7 @@ use midas::{
         move_gen::*,
         perft::{perft_driver, perft_tester},
         r#move::{Move, MoveList, MoveType},
-        uci::parse_move_string,
+        uci,
     },
     set_bit,
 };
@@ -32,32 +32,11 @@ fn main() {
             let fen = FEN("r3k2r/p1ppRpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
             let mut input = String::new();
 
-            b.board.parse_fen(TRICKY_POSITION);
+            b.board.parse_fen(START_POSITION);
             
-            let move_list = b.board.generate_moves();
+            b.board.parse_move_string("e2e4");
+            b.board.parse_move_string("a1d2");
 
-            /*
-            for m in (&move_list.moves[..move_list.count]).to_vec() {
-                b.preserve();
-                println!("{}", b.board);
-                stdin().read_line(&mut input).expect("Failure");
-
-                b.make_move(m, MoveType::AllMoves);
-                println!("{}", b.board);
-                stdin().read_line(&mut input).expect("Failure");
-
-                b.restore();
-            }
-            */
-
-            /*
-            parse_move_string("e2e4");
-            parse_move_string("a1d2");
-            */
-
-            let mut nodes: u64 = 0;
-            perft_tester(&mut b, &mut nodes, 5);
-            println!("{}", nodes);
         })
         .unwrap()
         .join()
