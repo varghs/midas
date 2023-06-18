@@ -187,6 +187,7 @@ impl Display for MoveList {
 impl BoardState {
     // returns if move is legal
     pub fn make_move(&mut self, m: Move, move_flag: MoveType) -> bool {
+        let c = self.preserve();
         // quiet move
         if move_flag == MoveType::AllMoves {
             self.preserve();
@@ -301,11 +302,8 @@ impl BoardState {
             self.board.side = !self.board.side;
 
             let square = self.board.get_piece_of_color(Piece::King, !self.board.side).index_of_lsb();
-            if square.is_none() {
-                println!("{}", m);
-            }
             if self.board.is_square_attacked(square.unwrap(), self.board.side) {
-                self.restore();
+                self.restore(c);
                 return false;
             } else {
                 return true;

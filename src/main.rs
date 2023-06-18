@@ -30,8 +30,25 @@ fn main() {
             let mut b = BoardState::new();
             // let mut buf = String::new();
             let fen = FEN("r3k2r/p1ppRpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
+            let mut input = String::new();
 
             b.board.parse_fen(START_POSITION);
+            
+            let move_list = b.board.generate_moves();
+
+            /*
+            for m in (&move_list.moves[..move_list.count]).to_vec() {
+                b.preserve();
+                println!("{}", b.board);
+                stdin().read_line(&mut input).expect("Failure");
+
+                b.make_move(m, MoveType::AllMoves);
+                println!("{}", b.board);
+                stdin().read_line(&mut input).expect("Failure");
+
+                b.restore();
+            }
+            */
 
             /*
             parse_move_string("e2e4");
@@ -39,7 +56,7 @@ fn main() {
             */
 
             let mut nodes: u64 = 0;
-            perft_tester(&mut b, &mut nodes, 2);
+            perft_tester(&mut b, &mut nodes, 6);
             println!("{}", nodes);
         })
         .unwrap()
