@@ -10,6 +10,7 @@ use rand::Rng;
 pub mod bishop_attacks;
 pub mod rook_attacks;
 
+#[derive(Clone)]
 pub struct SliderAttacks {
     pub bishops: BishopAttacks,
     pub rooks: RookAttacks,

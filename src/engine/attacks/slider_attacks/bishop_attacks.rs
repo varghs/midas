@@ -18,6 +18,7 @@ pub const bishop_relevant_bits: [usize; 64] = [
     6, 5, 5, 5, 5, 5, 5, 6,
 ];
 
+#[derive(Clone)]
 pub struct BishopAttacks {
     pub bishop_masks: [Bitboard; 64],          // [square]
     pub bishop_attacks: [[Bitboard; 512]; 64], // [square][occupancy]

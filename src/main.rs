@@ -1,4 +1,4 @@
-use std::mem::size_of;
+use std::{io::stdin, mem::size_of, time::Instant};
 
 use midas::{
     engine::{
@@ -8,8 +8,8 @@ use midas::{
         board::{Board, BoardState, Castle, Color, Piece},
         fen::*,
         move_gen::*,
-        r#move::{Move, MoveList},
-        square::Square,
+        perft::{perft_driver, perft_tester},
+        r#move::{Move, MoveList, MoveType},
     },
     set_bit,
 };
@@ -26,23 +26,15 @@ fn main() {
     std::thread::Builder::new()
         .stack_size(size_of::<u64>() * N)
         .spawn(|| {
-            let mut tables = AttackTables::new();
-            tables.populate();
-
-            let updated_init = FEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1 ");
-
             let mut b = BoardState::new();
-            let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
+            // let mut buf = String::new();
+            let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
 
             b.board.parse_fen(START_POSITION);
             println!("{}", b.board);
-            b.preserve();
 
-            b.board.parse_fen(fen);
-            println!("{}", b.board);
-
-            b.restore();
-            println!("{}", b.board);
+            let mut nodes: u64 = 0;
+            perft_tester(&mut b, &mut nodes, 2);
         })
         .unwrap()
         .join()

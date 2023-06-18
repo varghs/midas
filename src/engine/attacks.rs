@@ -9,6 +9,7 @@ pub mod knight_attacks;
 pub mod pawn_attacks;
 pub mod slider_attacks;
 
+#[derive(Clone)]
 pub struct AttackTables {
     pub pawns: PawnAttacks,
     pub knights: KnightAttacks,

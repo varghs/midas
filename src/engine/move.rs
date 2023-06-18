@@ -1,6 +1,7 @@
 use std::fmt::Display;
-use std::str::pattern::DoubleEndedSearcher;
 
+use crate::engine::bitboard::print_bitboard;
+use crate::get_bit;
 use crate::pop_bit;
 use crate::set_bit;
 
@@ -17,7 +18,7 @@ pub enum MoveType {
     OnlyCaptures,
 }
 
-// u16: 0000 0000 0011 1111 - source 
+// u16: 0000 0000 0011 1111 - source
 //      0000 1111 1100 0000 - target
 //      0001 0000 0000 0000 - capture
 //      0010 0000 0000 0000 - double push
@@ -26,15 +27,37 @@ pub enum MoveType {
 //
 //  Piece: piece moved
 //  Color: color moved
-//  Option<Piece>: piece promoted 
-//  Option<Color>: color promoted 
+//  Option<Piece>: piece promoted
+//  Option<Color>: color promoted
 #[derive(Clone, Copy)]
 pub struct Move(u16, Piece, Color, Option<Piece>, Option<Color>);
 
 impl Move {
-    pub fn new(source: Square, target: Square, moved_piece: Piece, moved_color: Color, promoted_piece: Option<Piece>, promoted_color: Option<Color>, capture: bool, double_push: bool, en_passant: bool, castling: bool) -> Self {
-        let num = (source as u16) | ((target as u16) << 6) | ((capture as u16) << 12) | ((double_push as u16) << 13) | ((en_passant as u16) << 14) | ((castling as u16) << 15); 
-        Move(num, moved_piece, moved_color, promoted_piece, promoted_color)
+    pub fn new(
+        source: Square,
+        target: Square,
+        moved_piece: Piece,
+        moved_color: Color,
+        promoted_piece: Option<Piece>,
+        promoted_color: Option<Color>,
+        capture: bool,
+        double_push: bool,
+        en_passant: bool,
+        castling: bool,
+    ) -> Self {
+        let num = (source as u16)
+            | ((target as u16) << 6)
+            | ((capture as u16) << 12)
+            | ((double_push as u16) << 13)
+            | ((en_passant as u16) << 14)
+            | ((castling as u16) << 15);
+        Move(
+            num,
+            moved_piece,
+            moved_color,
+            promoted_piece,
+            promoted_color,
+        )
     }
 
     pub fn default() -> Self {
@@ -85,14 +108,20 @@ impl Move {
 
 impl Display for Move {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let output = format!("{}{}{}", self.get_source(), self.get_target(), match self.get_promoted_piece() {
-            Some(i) => i.to_string().to_lowercase(),
-            None => String::new(),
-        });
+        let output = format!(
+            "{}{}{}",
+            self.get_source(),
+            self.get_target(),
+            match self.get_promoted_piece() {
+                Some(i) => i.to_string().to_lowercase(),
+                None => String::new(),
+            }
+        );
         write!(f, "{}", output)
     }
 }
 
+#[derive(Clone)]
 pub struct MoveList {
     pub moves: [Move; 256],
     pub count: usize,
@@ -119,13 +148,26 @@ impl Display for MoveList {
         let mut output = String::from("source, target, moved_piece, moved_color, promoted_piece, promoted_color, capture, double_push, en_passant, castling\n");
         for move_count in 0..self.count {
             let m = &self.moves[move_count];
-            output += format!("{:8}{:8}{:13}{:13}{:16}{:16}{:9}{:13}{:12}{:8}", m.get_source().to_string(), m.get_target().to_string(), m.get_piece().to_string(), m.get_color().to_string(), match m.get_promoted_piece() {
-                Some(i) => i.to_string(),
-                None => "None".to_string()
-            }, match m.get_promoted_color() {
+            output += format!(
+                "{:8}{:8}{:13}{:13}{:16}{:16}{:9}{:13}{:12}{:8}",
+                m.get_source().to_string(),
+                m.get_target().to_string(),
+                m.get_piece().to_string(),
+                m.get_color().to_string(),
+                match m.get_promoted_piece() {
                     Some(i) => i.to_string(),
                     None => "None".to_string(),
-                }, m.capture().to_string(), m.double_push().to_string(), m.en_passant().to_string(), m.castling().to_string()).as_str();
+                },
+                match m.get_promoted_color() {
+                    Some(i) => i.to_string(),
+                    None => "None".to_string(),
+                },
+                m.capture().to_string(),
+                m.double_push().to_string(),
+                m.en_passant().to_string(),
+                m.castling().to_string()
+            )
+            .as_str();
             output += "\n";
         }
 
@@ -136,7 +178,7 @@ impl Display for MoveList {
 }
 
 impl BoardState {
-    fn make_move(&mut self, m: Move, move_flag: MoveType) {
+    pub fn make_move(&mut self, m: Move, move_flag: MoveType) {
         // quiet move
         if move_flag == MoveType::AllMoves {
             self.preserve();
@@ -151,12 +193,71 @@ impl BoardState {
             let en_passant = m.en_passant();
             let castling = m.castling();
             pop_bit!(self.board.boards[piece as usize], source);
+            pop_bit!(self.board.boards[color as usize], source);
+
+            // handle captures
+            if capture {
+                for p in (Piece::Pawn as usize)..=(Piece::King as usize) {
+                    if get_bit!(
+                        self.board
+                            .get_piece_of_color(p.try_into().unwrap(), !self.board.side),
+                        target
+                    ) {
+                        pop_bit!(self.board.boards[p], target);
+                        pop_bit!(self.board.boards[(!self.board.side) as usize], target);
+                        break;
+                    }
+                }
+            }
+
             set_bit!(self.board.boards[piece as usize], target);
-        } else { // capture
+            set_bit!(self.board.boards[color as usize], target);
+
+            // handle pawn promotion
+            if promoted_piece.is_some() {
+                pop_bit!(self.board.boards[Piece::Pawn as usize], target);
+                pop_bit!(self.board.boards[color as usize], target);
+
+                set_bit!(self.board.boards[promoted_piece.unwrap() as usize], target);
+                set_bit!(self.board.boards[promoted_color.unwrap() as usize], target);
+            }
+
+            // handle enpassant captures
+            if en_passant {
+                if color == Color::White {
+                    pop_bit!(self.board.boards[Piece::Pawn as usize], (target as i32) - 8);
+                    pop_bit!(
+                        self.board.boards[Color::Black as usize],
+                        (target as i32) - 8
+                    )
+                } else {
+                    pop_bit!(self.board.boards[Piece::Pawn as usize], (target as i32) + 8);
+                    pop_bit!(
+                        self.board.boards[Color::White as usize],
+                        (target as i32) + 8
+                    )
+                }
+            }
+
+            self.board.en_passant_sq = None;
+
+            if double_pawn_push {
+                match color {
+                    Color::White => {
+                        self.board.en_passant_sq = Some((target as u64 - 8).try_into().unwrap())
+                    }
+                    Color::Black => {
+                        self.board.en_passant_sq = Some((target as u64 + 8).try_into().unwrap())
+                    }
+                }
+            }
+        } else {
+            // capture
             // make sure move is capture
             if m.capture() {
                 self.make_move(m, MoveType::AllMoves);
-            } else { // don't make move
+            } else {
+                // don't make move
                 return;
             }
         }

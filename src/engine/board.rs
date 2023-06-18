@@ -154,6 +154,7 @@ impl Display for CastleRep {
     }
 }
 
+#[derive(Clone)]
 pub struct Board {
     pub boards: [Bitboard; 8],
     pub side: Color,
@@ -342,6 +343,7 @@ impl Display for Board {
     }
 }
 
+#[derive(Clone)]
 pub struct BoardState {
     pub board: Board,
     pub boards_copy: [Bitboard; 8],

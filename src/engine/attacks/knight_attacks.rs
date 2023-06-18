@@ -4,6 +4,7 @@ use crate::engine::{
 };
 use crate::set_bit;
 
+#[derive(Clone)]
 pub struct KnightAttacks {
     pub knight_attacks: [Bitboard; 64], // [color][square]
 }

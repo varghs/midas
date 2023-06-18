@@ -3,6 +3,7 @@ use super::super::square::Square;
 use crate::engine::bitboard::{EMPTY, NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE};
 use crate::set_bit;
 
+#[derive(Clone)]
 pub struct KingAttacks {
     pub king_attacks: [Bitboard; 64], // [color][square]
 }

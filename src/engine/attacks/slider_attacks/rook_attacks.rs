@@ -1,6 +1,8 @@
 use crate::engine::bitboard::Bitboard;
+use crate::engine::bitboard::{
+    print_bitboard, EMPTY, NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, ONE,
+};
 use crate::engine::square::Square;
-use crate::engine::bitboard::{NOTABFILE, NOTAFILE, NOTHFILE, NOTHGFILE, EMPTY, ONE, print_bitboard};
 use crate::set_bit;
 
 use super::ROOK_MAGICS;
@@ -18,8 +20,9 @@ pub const rook_relevant_bits: [usize; 64] = [
     12, 11, 11, 11, 11, 11, 11, 12,
 ];
 
+#[derive(Clone)]
 pub struct RookAttacks {
-    pub rook_masks: [Bitboard; 64], // [square]
+    pub rook_masks: [Bitboard; 64],           // [square]
     pub rook_attacks: [[Bitboard; 4096]; 64], // [square][occupancy]
 }
 
@@ -27,7 +30,10 @@ impl RookAttacks {
     pub fn new() -> Self {
         let rook_masks = [0; 64];
         let rook_attacks = [[0; 4096]; 64];
-        Self { rook_masks, rook_attacks }
+        Self {
+            rook_masks,
+            rook_attacks,
+        }
     }
 
     pub fn mask_rook_attack(square: Square) -> Bitboard {

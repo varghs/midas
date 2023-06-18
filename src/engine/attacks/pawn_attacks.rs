@@ -7,6 +7,7 @@ use crate::{
     set_bit,
 };
 
+#[derive(Clone)]
 pub struct PawnAttacks {
     pub pawn_attacks: [[Bitboard; 64]; 2], // [color][square]
 }
