@@ -7,6 +7,7 @@ use super::{
 };
 
 impl Board {
+    // changes the Board's move list to the current position
     pub fn generate_moves(&mut self) {
         self.move_list.count = 0;
         let (mut source, mut target): (i32, i32);
