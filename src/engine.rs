@@ -8,3 +8,4 @@ pub mod perft;
 pub mod square;
 pub mod uci;
 pub mod search;
+pub mod evaluate;

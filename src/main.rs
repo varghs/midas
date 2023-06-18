@@ -28,12 +28,14 @@ fn main() {
         .stack_size(size_of::<u64>() * N)
         .spawn(|| {
             let mut b = BoardState::new();
-            // let mut buf = String::new();
-            let fen =
-                FEN("r3k2r/p11pqpb1/bn2pnp1/2pPN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
-            let mut input = String::new();
-
-            b.uci_loop();
+            let debug = true;
+            if debug {
+                b.board.parse_fen(KILLER_POSITION);
+                println!("{}", b.board);
+                println!("{}", b.evaluate());
+            } else {
+                b.uci_loop();
+            }
         })
         .unwrap()
         .join()

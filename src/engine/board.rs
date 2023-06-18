@@ -71,6 +71,17 @@ pub enum Color {
     Black,
 }
 
+impl TryFrom<usize> for Color {
+    type Error = String;
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Color::White),
+            1 => Ok(Color::Black),
+            _ => Err("Don't know how you managed to screw this one up, pal.".to_string())
+        }
+    }
+}
+
 impl Display for Color {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut output = String::new();
