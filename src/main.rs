@@ -32,7 +32,7 @@ fn main() {
             let fen = FEN("r3k2r/p1ppRpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
             let mut input = String::new();
 
-            b.board.parse_fen(START_POSITION);
+            b.board.parse_fen(TRICKY_POSITION);
             
             let move_list = b.board.generate_moves();
 
