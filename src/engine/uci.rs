@@ -7,7 +7,6 @@ use super::board::{Board, Piece, BoardState};
 use std::io::{self, BufWriter, Write};
 
 impl BoardState {
-
     pub fn uci_loop(&mut self) {
         // set stdin and stdout to null
         let mut input = String::new();
@@ -63,6 +62,7 @@ impl BoardState {
             else {
                 println!("invalid");
             }
+            println!("{}", self.board);
         }
     }
     // PLACEHOLDER
