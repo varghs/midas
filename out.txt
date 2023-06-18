@@ -1,19 +1,146 @@
  0 1 
 
- 8  r n b q k b n r 
- 7  p p p p p p p p 
- 6  . . . . . . . . 
- 5  . . . . . . . . 
- 4  . . . . . . . . 
- 3  . . . . . . . . 
- 2  P P P P P P P P 
- 1  R N B Q K B N R 
+ 8  r . . . k . . r 
+ 7  p . p p q p b . 
+ 6  b n . . p n p . 
+ 5  . . . P N . . . 
+ 4  . p . . P . . . 
+ 3  . . N . . Q . p 
+ 2  P P P B q P P P 
+ 1  R . . . K . . R 
 
     a b c d e f g h 
 Side to move: White 
 En passant square: None
 Castling: KQkq
- 0 1 
+e1
+false, Black
+a2a3
+e1
+false, Black
+a2a4
+e1
+false, Black
+b2b3
+e1
+false, Black
+g2g3
+e1
+false, Black
+g2g4
+e1
+false, Black
+g2h3
+e1
+false, Black
+d5d6
+e1
+false, Black
+d5e6
+e1
+false, Black
+a1b1
+e1
+false, Black
+a1c1
+e1
+false, Black
+a1d1
+e1
+false, Black
+h1f1
+e1
+false, Black
+h1g1
+e1
+false, Black
+c3b1
+e1
+false, Black
+c3d1
+e1
+false, Black
+c3e2
+e1
+false, Black
+c3a4
+e1
+false, Black
+c3b5
+e1
+false, Black
+e5d3
+e1
+false, Black
+e5c4
+e1
+false, Black
+e5g4
+e1
+false, Black
+e5c6
+e1
+false, Black
+e5g6
+e1
+false, Black
+e5d7
+e1
+false, Black
+e5f7
+e1
+false, Black
+d2c1
+e1
+false, Black
+d2e3
+e1
+false, Black
+d2f4
+e1
+false, Black
+d2g5
+e1
+false, Black
+d2h6
+e1
+false, Black
+f3e2
+e1
+false, Black
+f3d3
+e1
+false, Black
+f3e3
+e1
+false, Black
+f3g3
+e1
+false, Black
+f3h3
+e1
+false, Black
+f3f4
+e1
+false, Black
+f3g4
+e1
+false, Black
+f3f5
+e1
+false, Black
+f3h5
+e1
+false, Black
+f3f6
+d1
+false, Black
+e1d1
+f1
+false, Black
+e1f1
+e2
+false, Black
 
  8  r . . . k . . r 
  7  p . p p q p b . 
@@ -21,22 +148,22 @@ Castling: KQkq
  5  . . . P N . . . 
  4  . p . . P . . . 
  3  . . N . . Q . p 
- 2  P P P B B P P P 
- 1  R . . . K . . R 
+ 2  P P P B K P P P 
+ 1  R . . . . . . R 
 
     a b c d e f g h 
-Side to move: White 
-En passant square: c6
-Castling: KQkq
+Side to move: Black 
+En passant square: None
+Castling: --kq
 
- 8  r n b q k b n r 
- 7  p p p p p p p p 
- 6  . . . . . . . . 
- 5  . . . . . . . . 
- 4  . . . . . . . . 
- 3  . . . . . . . . 
- 2  P P P P P P P P 
- 1  R N B Q K B N R 
+ 8  r . . . k . . r 
+ 7  p . p p q p b . 
+ 6  b n . . p n p . 
+ 5  . . . P N . . . 
+ 4  . p . . P . . . 
+ 3  . . N . . Q . p 
+ 2  P P P B q P P P 
+ 1  R . . . K . . R 
 
     a b c d e f g h 
 Side to move: White 
