@@ -123,19 +123,23 @@ impl Board {
     pub fn parse_go(&mut self, go_command: &str) {
         let parts: Vec<&str> = go_command.trim().split_whitespace().collect();
 
+        let mut depth = -1;
+
         if parts.len() != 3 {
-            println!("depth: 6");
-            return;
+            depth = 6;
+        } else {
+            match parts[2].parse::<i32>() {
+                Ok(given_depth) => {
+                    depth = given_depth;
+                }
+                Err(_) => return,
+            }
         }
 
-        match parts[2].parse::<i32>() {
-            Ok(depth) => {
-                // TODO search_position(depth);
-                // PLACEHOLDER
-                Board::search_position();
-                println!("depth: {}", depth);
-            }
-            Err(_) => return,
-        }
+        // TODO search_position(depth);
+        // PLACEHOLDER
+        Board::search_position();
+
+        println!("depth: {}", depth);
     }
 }
