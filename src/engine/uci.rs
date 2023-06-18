@@ -4,8 +4,73 @@ use crate::engine::r#move::{MoveList, MoveType};
 use super::fen::FEN;
 use super::{r#move::Move, square::Square};
 use super::board::{Board, Piece, BoardState};
+use std::io::{self, BufWriter, Write};
 
 impl BoardState {
+
+    pub fn uci_loop(&mut self) {
+        // set stdin and stdout to null
+        let mut input = String::new();
+        io::stdout().flush().expect("could not flush stdout");
+
+        println!("id name Midas");
+        println!("id author Dionysus's Disciples, Albert Abzalimov and Shawn Varghese");
+        println!("uciok");
+
+        loop {
+            input.clear();
+
+            io::stdout().flush().expect("Failed to flush stdout");
+
+            if io::stdin().read_line(&mut input).is_err() {
+                continue;
+            }
+
+            if input.trim().is_empty() {
+                continue;
+            }
+
+            // Parse UCI "isready" command
+            if input.starts_with("isready") {
+                println!("readyok");
+                continue;
+            }
+            // Parse UCI "position" command
+            else if input.starts_with("position") {
+                // TODO
+                // self.parse_position(&input);
+                todo!();
+            }
+            // Parse UCI "ucinewgame" command
+            else if input.starts_with("ucinewgame") {
+                // TODO
+                // self.parse_position("position startpos");
+                todo!();
+            }
+            // Parse UCI "go" command
+            else if input.starts_with("go") {
+                // Call parse_go function
+                self.parse_go(&input);
+            }
+            // Parse UCI "quit" command
+            else if input.starts_with("quit") {
+                // Quit from the chess engine program execution
+                break;
+            }
+            // Parse UCI "uci" command
+            else if input.starts_with("uci") {
+                // Print engine info
+                println!("id name Midas");
+                println!("id author Dionysus's Disciples, Albert Abzalimov and Shawn Varghese");
+                println!("uciok");
+            }
+        }
+    }
+    // PLACEHOLDER
+    pub fn search_position() {
+        println!("bestmove d2d4");
+    }
+
     pub fn parse_move_string(&mut self, move_string: &str) -> Result<Move, String> {
         // create an instance of move_list
         let move_list = self.board.generate_moves();
@@ -109,6 +174,8 @@ impl BoardState {
         match parts[2].parse::<i32>() {
             Ok(depth) => {
                 // TODO search_position(depth);
+                // PLACEHOLDER
+                Board::search_position();
                 println!("depth: {}", depth);
             }
             Err(_) => return,
