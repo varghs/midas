@@ -33,18 +33,10 @@ fn main() {
             let mut input = String::new();
 
             b.board.parse_fen(fen);
-            let m = b.board.parse_move_string("d5c6");
-            // b.board.parse_move_string("a1d2");
-
             println!("{}", b.board);
 
-            if m.is_ok() {
-                b.make_move(m.unwrap(), MoveType::AllMoves);
-                println!("{}", b.board);
-            } else {
-                println!("illegal move!");
-            }
-            
+            b.parse_position("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 moves e2e4 e7e5 g1f3");
+            println!("{}", b.board);
         })
         .unwrap()
         .join()

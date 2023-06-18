@@ -1,12 +1,14 @@
-use crate::engine::r#move::MoveList;
+use crate::engine::fen::START_POSITION;
+use crate::engine::r#move::{MoveList, MoveType};
 
+use super::fen::FEN;
 use super::{r#move::Move, square::Square};
-use super::board::{Board, Piece};
+use super::board::{Board, Piece, BoardState};
 
-impl Board {
+impl BoardState {
     pub fn parse_move_string(&mut self, move_string: &str) -> Result<Move, String> {
         // create an instance of move_list
-        let move_list = self.generate_moves();
+        let move_list = self.board.generate_moves();
 
         // parse source_square using some fancy ASCII isnt that kewl!?
         let source_square: Square = ((move_string.chars().nth(0).expect("UHHH BAD MOVE") as usize
@@ -56,5 +58,40 @@ impl Board {
         return Err("Illegal move.".to_string());
     }
 
-    pub fn 
+    pub fn parse_position(&mut self, command: &str) {
+        let mut command = command.to_string();
+
+        if command == "position" {
+            self.board.parse_fen(START_POSITION);
+        } else {
+            command.drain(0..9);
+
+            if command.contains("startpos ") {
+                self.board.parse_fen(START_POSITION);
+                command.drain(0..9);
+            } else if command.contains("fen ") {
+                command.drain(0..4);
+                self.board.parse_fen(FEN(command.as_str()))
+            } else if command.contains("startpos") {
+                self.board.parse_fen(START_POSITION);
+                return;
+            }
+        }
+
+        if command.contains("moves ") {
+            let index = command.find("moves ").unwrap();
+            command.drain(0..(index+6));
+
+            let moves = command.split(' ');
+            
+            for i in moves {
+                let m = self.parse_move_string(i);
+                if m.is_err() {
+                    break;
+                }
+
+                self.make_move(m.unwrap(), MoveType::AllMoves);
+            }
+        }
+    }
 }

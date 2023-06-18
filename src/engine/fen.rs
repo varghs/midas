@@ -87,8 +87,6 @@ impl Board {
             self.en_passant_sq = None;
         }
 
-        println!("{}", fen_iter.as_str());
-
         // todo: half move clock and fullmove counter
     }
 }
