@@ -29,14 +29,22 @@ fn main() {
         .spawn(|| {
             let mut b = BoardState::new();
             // let mut buf = String::new();
-            let fen = FEN("r3k2r/p1ppRpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
+            let fen = FEN("r3k2r/p11pqpb1/bn2pnp1/2pPN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
             let mut input = String::new();
 
-            b.board.parse_fen(START_POSITION);
-            
-            b.board.parse_move_string("e2e4");
-            b.board.parse_move_string("a1d2");
+            b.board.parse_fen(fen);
+            let m = b.board.parse_move_string("d5c6");
+            // b.board.parse_move_string("a1d2");
 
+            println!("{}", b.board);
+
+            if m.is_ok() {
+                b.make_move(m.unwrap(), MoveType::AllMoves);
+                println!("{}", b.board);
+            } else {
+                println!("illegal move!");
+            }
+            
         })
         .unwrap()
         .join()
