@@ -29,7 +29,8 @@ fn main() {
         .spawn(|| {
             let mut b = BoardState::new();
             // let mut buf = String::new();
-            let fen = FEN("r3k2r/p11pqpb1/bn2pnp1/2pPN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
+            let fen =
+                FEN("r3k2r/p11pqpb1/bn2pnp1/2pPN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
             let mut input = String::new();
 
             b.board.parse_fen(fen);
@@ -44,7 +45,10 @@ fn main() {
             } else {
                 println!("illegal move!");
             }
-            
+
+            b.board.parse_go("go depth 634");
+            b.board.parse_go("go depth 3");
+            b.board.parse_go("go depth 12356623");
         })
         .unwrap()
         .join()
