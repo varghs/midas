@@ -33,7 +33,7 @@ fn main() {
                 FEN("r3k2r/p11pqpb1/bn2pnp1/2pPN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
             let mut input = String::new();
 
-            b.board.uci_loop();
+            b.uci_loop();
         })
         .unwrap()
         .join()

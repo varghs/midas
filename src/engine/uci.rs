@@ -37,15 +37,11 @@ impl BoardState {
             }
             // Parse UCI "position" command
             else if input.starts_with("position") {
-                // TODO
-                // self.parse_position(&input);
-                todo!();
+                self.parse_position(&input);
             }
             // Parse UCI "ucinewgame" command
             else if input.starts_with("ucinewgame") {
-                // TODO
-                // self.parse_position("position startpos");
-                todo!();
+                self.parse_position("position startpos");
             }
             // Parse UCI "go" command
             else if input.starts_with("go") {
@@ -63,6 +59,9 @@ impl BoardState {
                 println!("id name Midas");
                 println!("id author Dionysus's Disciples, Albert Abzalimov and Shawn Varghese");
                 println!("uciok");
+            }
+            else {
+                println!("invalid");
             }
         }
     }
@@ -166,19 +165,23 @@ impl BoardState {
     pub fn parse_go(&mut self, go_command: &str) {
         let parts: Vec<&str> = go_command.trim().split_whitespace().collect();
 
+        let mut depth = -1;
+
         if parts.len() != 3 {
-            println!("depth: {}", 6);
-            return;
+            depth = 6;
+        } else {
+            match parts[2].parse::<i32>() {
+                Ok(given_depth) => {
+                    depth = given_depth;
+                }
+                Err(_) => return,
+            }
         }
 
-        match parts[2].parse::<i32>() {
-            Ok(depth) => {
-                // TODO search_position(depth);
-                // PLACEHOLDER
-                Board::search_position();
-                println!("depth: {}", depth);
-            }
-            Err(_) => return,
-        }
+        // TODO search_position(depth);
+        // PLACEHOLDER
+        BoardState::search_position();
+
+        println!("depth: {}", depth);
     }
 }
