@@ -4,7 +4,7 @@ use super::square::Square;
 #[macro_export]
 macro_rules! get_bit {
     ($bitboard:expr, $square:expr) => {
-        ($bitboard) & ((1 as u64) << $square) != 0
+        ($bitboard) & ((1 as u64) << ($square)) != 0
     };
 }
 
@@ -12,7 +12,7 @@ macro_rules! get_bit {
 #[macro_export]
 macro_rules! set_bit {
     ($bitboard:expr, $square:expr) => {
-        ($bitboard) |= ((1 as u64) << $square)
+        ($bitboard) |= ((1 as u64) << ($square))
     };
 }
 
@@ -20,14 +20,14 @@ macro_rules! set_bit {
 #[macro_export]
 macro_rules! pop_bit {
     ($bitboard:expr, $square:expr) => {
-        ($bitboard) &= !((1 as u64) << $square)
+        ($bitboard) &= !((1 as u64) << ($square))
     };
 }
 
 #[macro_export]
 macro_rules! tog_bit {
     ($bitboard:expr, $square:expr) => {
-        ($bitboard) ^= ((1 as u64) << $square)
+        ($bitboard) ^= ((1 as u64) << ($square))
     };
 }
 

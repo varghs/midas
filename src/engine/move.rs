@@ -1,6 +1,7 @@
 use std::fmt::Display;
-use std::str::pattern::DoubleEndedSearcher;
 
+use crate::engine::bitboard::print_bitboard;
+use crate::get_bit;
 use crate::pop_bit;
 use crate::set_bit;
 
@@ -136,7 +137,7 @@ impl Display for MoveList {
 }
 
 impl BoardState {
-    fn make_move(&mut self, m: Move, move_flag: MoveType) {
+    pub fn make_move(&mut self, m: Move, move_flag: MoveType) {
         // quiet move
         if move_flag == MoveType::AllMoves {
             self.preserve();
@@ -151,7 +152,50 @@ impl BoardState {
             let en_passant = m.en_passant();
             let castling = m.castling();
             pop_bit!(self.board.boards[piece as usize], source);
+            pop_bit!(self.board.boards[color as usize], source);
+
+            // handle captures
+            if capture {
+                for p in (Piece::Pawn as usize)..=(Piece::King as usize) {
+                    if get_bit!(self.board.get_piece_of_color(p.try_into().unwrap(), !self.board.side), target) {
+                        pop_bit!(self.board.boards[p], target);
+                        pop_bit!(self.board.boards[(!self.board.side) as usize], target);
+                        break;
+                    }
+                }
+            }
+
             set_bit!(self.board.boards[piece as usize], target);
+            set_bit!(self.board.boards[color as usize], target);
+
+            // handle pawn promotion
+            if promoted_piece.is_some() {
+                pop_bit!(self.board.boards[Piece::Pawn as usize], target);
+                pop_bit!(self.board.boards[color as usize], target);
+
+                set_bit!(self.board.boards[promoted_piece.unwrap() as usize], target);
+                set_bit!(self.board.boards[promoted_color.unwrap() as usize], target);
+            }
+
+            // handle enpassant captures
+            if en_passant {
+                if color == Color::White {
+                    pop_bit!(self.board.boards[Piece::Pawn as usize], (target as i32) - 8);
+                    pop_bit!(self.board.boards[Color::Black as usize], (target as i32) - 8)
+                } else {
+                    pop_bit!(self.board.boards[Piece::Pawn as usize], (target as i32) + 8);
+                    pop_bit!(self.board.boards[Color::White as usize], (target as i32) + 8)
+                }
+            }
+
+            self.board.en_passant_sq = None;
+
+            if double_pawn_push {
+                match color {
+                    Color::White => self.board.en_passant_sq = Some((target as u64 - 8).try_into().unwrap()),
+                    Color::Black => self.board.en_passant_sq = Some((target as u64 + 8).try_into().unwrap()),
+                }
+            }
         } else { // capture
             // make sure move is capture
             if m.capture() {

@@ -182,7 +182,6 @@ impl Board {
                             self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Knight, self.side, None, None, false, false, false, false));
                         } else {
                             // capture move
-                            println!("piece capture move: {}{}", ASCII_SQUARE[source as usize], ASCII_SQUARE[target as usize]);
                             self.move_list.add_move(Move::new((source as u64).try_into().unwrap(), (target as u64).try_into().unwrap(), Piece::Knight, self.side, None, None, true, false, false, false));
                         }
 

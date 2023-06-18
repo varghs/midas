@@ -1,4 +1,4 @@
-use std::mem::size_of;
+use std::{mem::size_of, io::stdin};
 
 use midas::{
     engine::{
@@ -9,7 +9,7 @@ use midas::{
         fen::*,
         square::Square,
         move_gen::*,
-        r#move::{Move, MoveList}
+        r#move::{Move, MoveList, MoveType}
     },
     set_bit,
 };
@@ -26,23 +26,26 @@ fn main() {
     std::thread::Builder::new()
         .stack_size(size_of::<u64>() * N)
         .spawn(|| {
-            let mut tables = AttackTables::new();
-            tables.populate();
-
-            let updated_init = FEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1 ");
-
             let mut b = BoardState::new();
-            let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
-
-            b.board.parse_fen(START_POSITION);
-            println!("{}", b.board);
-            b.preserve();
+            let mut buf = String::new();
+            let fen = FEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1 ");
 
             b.board.parse_fen(fen);
             println!("{}", b.board);
+            b.board.generate_moves();
 
-            b.restore();
-            println!("{}", b.board);
+            for m in (&b.board.move_list.moves[..b.board.move_list.count]).to_vec() {
+                b.preserve();
+
+                println!("{}", m);
+                b.make_move(m, MoveType::AllMoves);
+                println!("{}", b.board);
+                stdin().read_line(&mut buf).expect("fail");
+
+                b.restore();
+                println!("{}", b.board);
+                stdin().read_line(&mut buf).expect("fail");
+            }
         })
         .unwrap()
         .join()
