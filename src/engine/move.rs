@@ -12,6 +12,17 @@ use super::board::Color;
 use super::board::Piece;
 use super::square::Square;
 
+const CASTLING_RIGHTS: [u8; 64] = [
+    13, 15, 15, 15, 12, 15, 15, 14,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+     7, 15, 15, 15,  3, 15, 15, 11,
+];
+
 #[derive(PartialEq)]
 pub enum MoveType {
     AllMoves,
@@ -231,6 +242,9 @@ impl BoardState {
                     _ => panic!("I don't know how it got here, and I don't wanna know how it got here.")
                 }
             }
+            // update castling rights
+            self.board.castle.0 &= CASTLING_RIGHTS[source as usize];
+            self.board.castle.0 &= CASTLING_RIGHTS[target as usize];
         } else { // capture
             // make sure move is capture
             if m.capture() {
