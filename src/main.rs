@@ -56,7 +56,7 @@ fn main() {
             */
 
             let mut nodes: u64 = 0;
-            perft_tester(&mut b, &mut nodes, 6);
+            perft_tester(&mut b, &mut nodes, 5);
             println!("{}", nodes);
         })
         .unwrap()
