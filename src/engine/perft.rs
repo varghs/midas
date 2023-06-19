@@ -1,4 +1,4 @@
-use std::{time::Instant, io::stdin};
+use std::time::Instant;
 
 use super::{
     board::{Board, BoardState},
@@ -28,7 +28,7 @@ pub fn perft_driver(board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
 
         // call perft recursively
         perft_driver(board_state, nodes, depth - 1);
-        board_state.restore(c);
+        board_state.restore(&c);
     }
 }
 
@@ -45,12 +45,10 @@ pub fn perft_tester(board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
 
     let move_list = board_state.board.generate_moves();
 
-    for m in
-        (&move_list.moves[..move_list.count]).to_vec()
-    {
+    for m in (&move_list.moves[..move_list.count]).to_vec() {
         // preserve the state so u can later restore it
         let c = board_state.preserve();
-        
+
         if !board_state.make_move(m, MoveType::AllMoves) {
             continue;
         }
@@ -62,7 +60,7 @@ pub fn perft_tester(board_state: &mut BoardState, nodes: &mut u64, depth: u16) {
 
         let old_nodes: u64 = *nodes - cumulative_nodes;
 
-        board_state.restore(c);
+        board_state.restore(&c);
 
         println!("\tmove {}\t\t nodes: {}", m, old_nodes);
     }

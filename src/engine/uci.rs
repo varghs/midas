@@ -1,9 +1,9 @@
 use crate::engine::fen::START_POSITION;
 use crate::engine::r#move::{MoveList, MoveType};
 
+use super::board::{Board, BoardState, Piece};
 use super::fen::FEN;
 use super::{r#move::Move, square::Square};
-use super::board::{Board, Piece, BoardState};
 use std::io::{self, BufWriter, Write};
 
 impl BoardState {
@@ -58,15 +58,14 @@ impl BoardState {
                 println!("id name Midas");
                 println!("id author Dionysus's Disciples, Albert Abzalimov and Shawn Varghese");
                 println!("uciok");
-            }
-            else {
+            } else {
                 println!("invalid");
             }
             println!("{}", self.board);
         }
     }
     // PLACEHOLDER
-    pub fn search_position() {
+    pub fn search_position_placeholder() {
         println!("bestmove d2d4");
     }
 
@@ -145,10 +144,10 @@ impl BoardState {
 
         if command.contains("moves ") {
             let index = command.find("moves ").unwrap();
-            command.drain(0..(index+6));
+            command.drain(0..(index + 6));
 
             let moves = command.split(' ');
-            
+
             for i in moves {
                 let m = self.parse_move_string(i);
                 if m.is_err() {
@@ -180,7 +179,7 @@ impl BoardState {
 
         // TODO search_position(depth);
         // PLACEHOLDER
-        BoardState::search_position();
+        BoardState::search_position_placeholder();
 
         println!("depth: {}", depth);
     }

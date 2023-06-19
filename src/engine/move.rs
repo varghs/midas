@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
-use crate::engine::bitboard::LS1B;
 use crate::engine::bitboard::print_bitboard;
+use crate::engine::bitboard::LS1B;
 use crate::get_bit;
 use crate::pop_bit;
 use crate::set_bit;
@@ -301,9 +301,15 @@ impl BoardState {
 
             self.board.side = !self.board.side;
 
-            let square = self.board.get_piece_of_color(Piece::King, !self.board.side).index_of_lsb();
-            if self.board.is_square_attacked(square.unwrap(), self.board.side) {
-                self.restore(c);
+            let square = self
+                .board
+                .get_piece_of_color(Piece::King, !self.board.side)
+                .index_of_lsb();
+            if self
+                .board
+                .is_square_attacked(square.unwrap(), self.board.side)
+            {
+                self.restore(&c);
                 return false;
             } else {
                 return true;
@@ -312,7 +318,7 @@ impl BoardState {
             // capture
             // make sure move is capture
             if m.capture() {
-                return self.make_move(m, MoveType::AllMoves)
+                return self.make_move(m, MoveType::AllMoves);
             } else {
                 // don't make move
                 return false;

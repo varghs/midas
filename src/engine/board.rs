@@ -1,7 +1,7 @@
 use super::{
     attacks::AttackTables,
     bitboard::{print_bitboard, Bitboard},
-    r#move::MoveList,
+    r#move::{Move, MoveList},
 };
 use crate::engine::square::Square;
 use std::fmt::Display;
@@ -77,7 +77,7 @@ impl TryFrom<usize> for Color {
         match value {
             0 => Ok(Color::White),
             1 => Ok(Color::Black),
-            _ => Err("Don't know how you managed to screw this one up, pal.".to_string())
+            _ => Err("Don't know how you managed to screw this one up, pal.".to_string()),
         }
     }
 }
@@ -169,6 +169,8 @@ impl Display for CastleRep {
 pub struct Board {
     pub boards: [Bitboard; 8],
     pub side: Color,
+    pub ply: usize,
+    pub best_move: Move,
     pub en_passant_sq: Option<Square>,
     pub castle: CastleRep,
     pub attack_tables: AttackTables,
@@ -186,6 +188,8 @@ impl Board {
         let white: Bitboard = 0x000000000000FFFF;
 
         let side = Color::White;
+        let ply = 0;
+        let best_move = Move::default();
         let en_passant_sq: Option<Square> = Some(Square::e3);
 
         let mut attack_tables = AttackTables::new();
@@ -195,6 +199,8 @@ impl Board {
         Board {
             boards,
             side,
+            ply,
+            best_move,
             castle: CastleRep::default(),
             en_passant_sq,
             attack_tables,
@@ -366,9 +372,7 @@ pub struct BoardCopy {
 impl BoardState {
     pub fn new() -> Self {
         let board = Board::new();
-        let ret = Self {
-            board
-        };
+        let ret = Self { board };
         ret
     }
 
@@ -378,10 +382,15 @@ impl BoardState {
         let side_copy = self.board.side;
         let en_passant_sq_copy = self.board.en_passant_sq;
         let castle_copy = self.board.castle;
-        BoardCopy { boards_copy, side_copy, en_passant_sq_copy, castle_copy }
+        BoardCopy {
+            boards_copy,
+            side_copy,
+            en_passant_sq_copy,
+            castle_copy,
+        }
     }
 
-    pub fn restore(&mut self, copy: BoardCopy) {
+    pub fn restore(&mut self, copy: &BoardCopy) {
         self.board.boards.copy_from_slice(&copy.boards_copy[..]);
         self.board.side = copy.side_copy;
         self.board.en_passant_sq = copy.en_passant_sq_copy;
