@@ -360,6 +360,9 @@ impl Display for Board {
 #[derive(Clone)]
 pub struct BoardState {
     pub board: Board,
+    pub ply: i32,
+    pub best_move: Move,
+    pub nodes: u64,
 }
 
 pub struct BoardCopy {
@@ -372,7 +375,15 @@ pub struct BoardCopy {
 impl BoardState {
     pub fn new() -> Self {
         let board = Board::new();
-        let ret = Self { board };
+        let best_move = Move::default();
+        let ply = 0;
+        let nodes = 0;
+        let ret = Self {
+            board,
+            best_move,
+            ply,
+            nodes,
+        };
         ret
     }
 
@@ -390,7 +401,7 @@ impl BoardState {
         }
     }
 
-    pub fn restore(&mut self, copy: &BoardCopy) {
+    pub fn restore(&mut self, copy: BoardCopy) {
         self.board.boards.copy_from_slice(&copy.boards_copy[..]);
         self.board.side = copy.side_copy;
         self.board.en_passant_sq = copy.en_passant_sq_copy;

@@ -5,7 +5,8 @@ beta is the minimizing side
 */
 
 use super::{
-    board::{Board, BoardState},
+    bitboard::LS1B,
+    board::{BoardState, Color, Piece},
     r#move::{Move, MoveType},
 };
 
@@ -14,53 +15,90 @@ impl BoardState {
         if depth == 0 {
             return self.evaluate();
         }
-        let mut best_move_so_far: Move = Move::default();
-        let old_value_alpha = alpha;
+
+        self.nodes += 1;
+
+        let mut best = Move::default();
+
+        let mut legal_moves = 0;
+
+        // LOOK AT THIS FANCY IF STATEMENT AHH
+        // are we in-check?
+        let in_check: bool = if self.board.side == Color::White {
+            let white_king_bb = self
+                .board
+                .get_piece_of_color(Piece::King, Color::White)
+                .index_of_lsb()
+                .expect("there is somehow no white king on the board... what");
+
+            // is our white king attacked by a black piece?
+            self.board.is_square_attacked(white_king_bb, Color::Black)
+        } else {
+            let black_king_bb = self
+                .board
+                .get_piece_of_color(Piece::King, Color::Black)
+                .index_of_lsb()
+                .expect("there is somehow no black king on the board... what");
+
+            // is our black king attacked by a white piece?
+            self.board.is_square_attacked(black_king_bb, Color::White)
+        };
+
+        let old_alpha = alpha;
+
         let move_list = self.board.generate_moves();
 
         for m in (&move_list.moves[..move_list.count]).to_vec() {
-            // preserve the state so u can later restore it
             let copy = self.preserve();
 
-            // increment ply
-            board_state.board.ply += 1;
+            self.ply += 1;
 
-            // ILLEGAL MOVE!!
-            if !board_state.make_move(m, MoveType::AllMoves) {
-                board_state.board.ply -= 1;
-                board_state.restore(&copy);
+            // ILLEGAL MOVES
+            if !self.make_move(m, MoveType::AllMoves) {
+                self.ply -= 1;
+                continue;
             }
 
-            // negate the stuff cuz its the other person's turn now
-            let score = -negamax(board_state, -beta, -alpha, depth - 1);
-            board_state.board.ply -= 1;
-            board_state.restore(&copy);
+            legal_moves += 1;
 
-            // fail-hard beta cutoff
+            let score = -self.negamax(-beta, -alpha, depth - 1);
+            self.restore(copy);
+            self.ply -= 1;
+
+            // move fails high
             if score >= beta {
-                // node (move) fails high
-                // meaning that this is where the cutoff is
                 return beta;
             }
 
-            // what if there is a better move?
             if score > alpha {
-                // principal variation (PV) node
+                // PV node (move)
                 alpha = score;
 
-                // roottt node
-                if board_state.board.ply == 0 {
-                    best_move_so_far = m;
+                if self.ply == 0 {
+                    // associate best move with best score
+                    best = m;
                 }
             }
         }
 
-        // found a better move
-        if old_value_alpha != alpha {
-            board_state.board.best_move = best_move_so_far;
+        // we dont have any legal moves at all
+        // meaning we are either in STALEMATE or in CHECKMATE
+        if legal_moves == 0 {
+            // checkmate
+            if in_check {
+                return -49000 + self.ply;
+            } else {
+                // draw!
+                return 0;
+            }
         }
 
-        // move fails low
+        // found a better move
+        if old_alpha != alpha {
+            self.best_move = best;
+        }
+
+        // node (move) fails low
         return alpha;
     }
 }

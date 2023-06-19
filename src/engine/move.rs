@@ -1,6 +1,5 @@
 use std::fmt::Display;
 
-use crate::engine::bitboard::print_bitboard;
 use crate::engine::bitboard::LS1B;
 use crate::get_bit;
 use crate::pop_bit;
@@ -36,7 +35,7 @@ pub enum MoveType {
 //  Color: color moved
 //  Option<Piece>: piece promoted
 //  Option<Color>: color promoted
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Move(u16, Piece, Color, Option<Piece>, Option<Color>);
 
 impl Move {
@@ -309,7 +308,7 @@ impl BoardState {
                 .board
                 .is_square_attacked(square.unwrap(), self.board.side)
             {
-                self.restore(&c);
+                self.restore(c);
                 return false;
             } else {
                 return true;

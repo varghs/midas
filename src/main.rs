@@ -28,11 +28,12 @@ fn main() {
         .stack_size(size_of::<u64>() * N)
         .spawn(|| {
             let mut b = BoardState::new();
-            let debug = true;
+            let debug = false;
+            let fen = FEN("rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1 ");
             if debug {
-                b.board.parse_fen(KILLER_POSITION);
+                b.board.parse_fen(START_POSITION);
                 println!("{}", b.board);
-                println!("{}", b.evaluate());
+                b.search_position(1);
             } else {
                 b.uci_loop();
             }
