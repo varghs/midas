@@ -11,9 +11,52 @@ use super::{
 };
 
 impl BoardState {
+    pub fn quiescence(&mut self, mut alpha: i32, beta: i32) -> i32 {
+        let evaluation = self.evaluate();
+        // move fails high
+        if evaluation >= beta {
+            return beta;
+        }
+
+        if evaluation > alpha {
+            // PV node (move)
+            alpha = evaluation;
+        }
+
+        let move_list = self.board.generate_moves();
+
+        for m in (&move_list.moves[..move_list.count]).to_vec() {
+            let copy = self.preserve();
+
+            self.ply += 1;
+
+            // ILLEGAL MOVES
+            if !self.make_move(m, MoveType::OnlyCaptures) {
+                self.ply -= 1;
+                continue;
+            }
+
+            let score = -self.quiescence(-beta, -alpha);
+            self.restore(copy);
+            self.ply -= 1;
+
+            // move fails high
+            if score >= beta {
+                return beta;
+            }
+
+            if score > alpha {
+                // PV node (move)
+                alpha = score;
+            }
+        }
+        
+        // node (move) fails low
+        alpha
+    }
     pub fn negamax(&mut self, mut alpha: i32, beta: i32, depth: i32) -> i32 {
         if depth == 0 {
-            return self.evaluate();
+            return self.quiescence(alpha, beta);
         }
 
         self.nodes += 1;
