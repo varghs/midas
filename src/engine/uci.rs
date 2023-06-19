@@ -66,8 +66,10 @@ impl BoardState {
         }
     }
     // PLACEHOLDER
-    pub fn search_position() {
-        println!("bestmove d2d4");
+    pub fn search_position(&mut self, depth: i32) {
+        // find best move in position
+        let score = self.negamax(-50000, 50000, depth);
+        println!("bestmove {}", self.best_move);
     }
 
     pub fn parse_move_string(&mut self, move_string: &str) -> Result<Move, String> {
@@ -180,7 +182,7 @@ impl BoardState {
 
         // TODO search_position(depth);
         // PLACEHOLDER
-        BoardState::search_position();
+        self.search_position(depth);
 
         println!("depth: {}", depth);
     }

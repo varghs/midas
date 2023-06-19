@@ -1,7 +1,7 @@
 use super::{
     attacks::AttackTables,
     bitboard::{print_bitboard, Bitboard},
-    r#move::MoveList,
+    r#move::{MoveList, Move},
 };
 use crate::engine::square::Square;
 use std::fmt::Display;
@@ -354,6 +354,9 @@ impl Display for Board {
 #[derive(Clone)]
 pub struct BoardState {
     pub board: Board,
+    pub ply: i32,
+    pub best_move: Move,
+    pub nodes: u64,
 }
 
 pub struct BoardCopy {
@@ -366,8 +369,14 @@ pub struct BoardCopy {
 impl BoardState {
     pub fn new() -> Self {
         let board = Board::new();
+        let best_move = Move::default();
+        let ply = 0;
+        let nodes = 0;
         let ret = Self {
-            board
+            board,
+            best_move,
+            ply,
+            nodes
         };
         ret
     }
