@@ -1,7 +1,6 @@
- 0 1 
 
  8  r . . . k . . r 
- 7  p P p p q p b . 
+ 7  p . p p q p b . 
  6  b n . . p n p . 
  5  . . . P N . . . 
  4  . p . . P . . . 
@@ -13,17 +12,51 @@
 Side to move: White 
 En passant square: None
 Castling: KQkq
-
- 8  R . . . k . . r 
- 7  p . p p q p b . 
- 6  b n . . p n p . 
- 5  . . . P N . . . 
- 4  . p . . P . . . 
- 3  . . N . . Q . p 
- 2  P P P B B P P P 
- 1  R . . . K . . R 
-
-    a b c d e f g h 
-Side to move: Black 
-En passant square: None
-Castling: KQk-
+score of move a2a3: 0
+score of move a2a4: 0
+score of move b2b3: 0
+score of move g2g3: 0
+score of move g2g4: 0
+score of move g2h3: 105
+score of move d5d6: 0
+score of move d5e6: 105
+score of move a1b1: 0
+score of move a1c1: 0
+score of move a1d1: 0
+score of move h1f1: 0
+score of move h1g1: 0
+score of move c3b1: 0
+score of move c3d1: 0
+score of move c3a4: 0
+score of move c3b5: 0
+score of move e5d3: 0
+score of move e5c4: 0
+score of move e5g4: 0
+score of move e5c6: 0
+score of move e5g6: 104
+score of move e5d7: 104
+score of move e5f7: 104
+score of move d2c1: 0
+score of move d2e3: 0
+score of move d2f4: 0
+score of move d2g5: 0
+score of move d2h6: 0
+score of move e2d1: 0
+score of move e2f1: 0
+score of move e2d3: 0
+score of move e2c4: 0
+score of move e2b5: 0
+score of move e2a6: 303
+score of move f3d3: 0
+score of move f3e3: 0
+score of move f3g3: 0
+score of move f3h3: 101
+score of move f3f4: 0
+score of move f3g4: 0
+score of move f3f5: 0
+score of move f3h5: 0
+score of move f3f6: 201
+score of move e1g1: 0
+score of move e1c1: 0
+score of move e1d1: 0
+score of move e1f1: 0

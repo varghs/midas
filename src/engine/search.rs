@@ -4,14 +4,87 @@ alpha is the maximizing side
 beta is the minimizing side
 */
 
+use crate::get_bit;
+
 use super::{
     bitboard::LS1B,
     board::{BoardState, Color, Piece},
-    r#move::{Move, MoveType},
+    r#move::{Move, MoveType, MoveList},
 };
 
+// most valuable victim & less valuable attacker
+
+/*
+                          
+    (Victims) Pawn Knight Bishop   Rook  Queen   King
+  (Attackers)
+        Pawn   105    205    305    405    505    605
+      Knight   104    204    304    404    504    604
+      Bishop   103    203    303    403    503    603
+        Rook   102    202    302    402    502    602
+       Queen   101    201    301    401    501    601
+        King   100    200    300    400    500    600
+
+*/
+
+// [attacker_color][attacker_piece][victim_color][victim_piece]
+pub const MVV_LVA: [[[[i32; 6]; 2]; 6]; 2] = [
+    [[[105, 405, 205, 305, 505, 605], [105, 405, 205, 305, 505, 605]],
+    [[102, 402, 202, 302, 502, 602], [102, 402, 202, 302, 502, 602]],
+    [[104, 404, 204, 304, 504, 604], [104, 404, 204, 304, 504, 604]],
+    [[103, 403, 203, 303, 503, 603], [103, 403, 203, 303, 503, 603]],
+    [[101, 401, 201, 301, 501, 601], [101, 401, 201, 301, 501, 601]],
+    [[100, 400, 200, 300, 500, 600], [100, 400, 200, 300, 500, 600]]],
+
+    [[[105, 405, 205, 305, 505, 605], [105, 405, 205, 305, 505, 605]],
+    [[102, 402, 202, 302, 502, 602], [102, 402, 202, 302, 502, 602]],
+    [[104, 404, 204, 304, 504, 604], [104, 404, 204, 304, 504, 604]],
+    [[103, 403, 203, 303, 503, 603], [103, 403, 203, 303, 503, 603]],
+    [[101, 401, 201, 301, 501, 601], [101, 401, 201, 301, 501, 601]],
+    [[100, 400, 200, 300, 500, 600], [100, 400, 200, 300, 500, 600]]],
+];
+
 impl BoardState {
+    pub fn score_move(&mut self, m: Move) -> i32 {
+        if m.capture() {
+            let mut target = Piece::Pawn;
+
+            for p in (Piece::Pawn as usize)..=(Piece::King as usize) {
+                if get_bit!(self.board.get_piece_of_color(p.try_into().unwrap(), !self.board.side), m.get_target()) {
+                    target = p.try_into().unwrap();
+                    break;
+                }
+            }
+
+            return MVV_LVA[self.board.side as usize][m.get_piece() as usize - 2][!self.board.side as usize][target as usize - 2];
+        }
+        0
+    }
+
+    pub fn sort_moves(&mut self, move_list: &mut MoveList) {
+        let mut move_scores: Vec<i32> = vec![0; move_list.count];
+
+        for i in 0..move_list.count {
+            *move_scores.get_mut(i).unwrap() = self.score_move(move_list.moves[i]);
+        }
+
+        for current_move in 0..move_list.count {
+            for next_move in 0..move_list.count {
+                if move_scores.get(current_move).unwrap() > move_scores.get(next_move).unwrap() {
+                    let temp_score = *move_scores.get(current_move).unwrap();
+                    *move_scores.get_mut(current_move).unwrap() = *move_scores.get(next_move).unwrap();
+                    *move_scores.get_mut(next_move).unwrap() = temp_score;
+
+                    let temp_move = move_list.moves[current_move];
+                    move_list.moves[current_move] = move_list.moves[next_move];
+                    move_list.moves[next_move] = temp_move;
+                }
+            }
+        }
+    }
+
     pub fn quiescence(&mut self, mut alpha: i32, beta: i32) -> i32 {
+        self.nodes += 1;
         let evaluation = self.evaluate();
         // move fails high
         if evaluation >= beta {
@@ -54,7 +127,7 @@ impl BoardState {
         // node (move) fails low
         alpha
     }
-    pub fn negamax(&mut self, mut alpha: i32, beta: i32, depth: i32) -> i32 {
+    pub fn negamax(&mut self, mut alpha: i32, beta: i32, mut depth: i32) -> i32 {
         if depth == 0 {
             return self.quiescence(alpha, beta);
         }
@@ -87,9 +160,15 @@ impl BoardState {
             self.board.is_square_attacked(black_king_bb, Color::White)
         };
 
+        if in_check {
+            depth += 1;
+        }
+
         let old_alpha = alpha;
 
-        let move_list = self.board.generate_moves();
+        let mut move_list = self.board.generate_moves();
+
+        self.sort_moves(&mut move_list);
 
         for m in (&move_list.moves[..move_list.count]).to_vec() {
             let copy = self.preserve();

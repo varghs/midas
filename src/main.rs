@@ -11,6 +11,8 @@ use midas::{
         perft::{perft_driver, perft_tester},
         r#move::{Move, MoveList, MoveType},
         uci,
+        search::*,
+        square::Square,
     },
     set_bit,
 };
@@ -31,9 +33,10 @@ fn main() {
             let debug = false;
             let fen = FEN("rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1 ");
             if debug {
-                b.board.parse_fen(START_POSITION);
+                b.board.parse_fen(TRICKY_POSITION);
                 println!("{}", b.board);
-                b.search_position(1);
+                b.search_position(5);
+
             } else {
                 b.uci_loop();
             }
